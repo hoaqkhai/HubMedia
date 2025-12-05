@@ -1,106 +1,163 @@
-// ==================== SIMPLE CHART LIBRARY ====================
+// ==================== PROFESSIONAL CHART LIBRARY ====================
 class Chart {
-    constructor(canvas) {
+    constructor(canvas, config = {}) {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
         const rect = canvas.parentElement.getBoundingClientRect();
         this.canvas.width = rect.width * 2;
         this.canvas.height = rect.height * 2;
         this.ctx.scale(2, 2);
+        
+        this.width = rect.width;
+        this.height = rect.height;
+        this.padding = config.padding || { top: 20, right: 20, bottom: 30, left: 40 };
+        this.chartWidth = this.width - this.padding.left - this.padding.right;
+        this.chartHeight = this.height - this.padding.top - this.padding.bottom;
     }
 
-    drawAreaChart(data, color = '#4A90E2') {
-        const width = this.canvas.width / 2;
-        const height = this.canvas.height / 2;
-        const padding = 20;
-        const chartHeight = height - padding * 2;
-        const chartWidth = width - padding * 2;
-        
-        const max = Math.max(...data);
-        const step = chartWidth / (data.length - 1);
-        
-        // Draw area
+    clear() {
+        this.ctx.clearRect(0, 0, this.width, this.height);
+    }
+
+    drawGrid(horizontalCount = 5) {
         this.ctx.beginPath();
-        this.ctx.moveTo(padding, height - padding);
+        this.ctx.strokeStyle = '#E9ECEF';
+        this.ctx.lineWidth = 1;
+
+        // Horizontal Grid
+        for (let i = 0; i <= horizontalCount; i++) {
+            const y = this.padding.top + (this.chartHeight / horizontalCount) * i;
+            this.ctx.moveTo(this.padding.left, y);
+            this.ctx.lineTo(this.width - this.padding.right, y);
+        }
         
-        data.forEach((value, i) => {
-            const x = padding + i * step;
-            const y = height - padding - (value / max) * chartHeight;
-            this.ctx.lineTo(x, y);
-        });
-        
-        this.ctx.lineTo(padding + chartWidth, height - padding);
-        this.ctx.closePath();
-        
-        const gradient = this.ctx.createLinearGradient(0, 0, 0, height);
-        gradient.addColorStop(0, color + '80');
-        gradient.addColorStop(1, color + '10');
-        this.ctx.fillStyle = gradient;
-        this.ctx.fill();
-        
-        // Draw line
-        this.ctx.beginPath();
-        data.forEach((value, i) => {
-            const x = padding + i * step;
-            const y = height - padding - (value / max) * chartHeight;
-            if (i === 0) this.ctx.moveTo(x, y);
-            else this.ctx.lineTo(x, y);
-        });
-        this.ctx.strokeStyle = color;
-        this.ctx.lineWidth = 2;
         this.ctx.stroke();
     }
 
-    drawBarChart(data) {
-        const width = this.canvas.width / 2;
-        const height = this.canvas.height / 2;
-        const padding = 20;
-        const chartHeight = height - padding * 2;
-        const barWidth = (width - padding * 2) / (data.length * 2);
+    drawAxes(labels, maxVal) {
+        this.ctx.fillStyle = '#6C757D';
+        this.ctx.font = '10px Inter';
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'top';
+
+        // X Axis Labels
+        if (labels) {
+            const step = this.chartWidth / (labels.length - 1);
+            labels.forEach((label, i) => {
+                const x = this.padding.left + i * step;
+                if (window.innerWidth < 768 && i % 2 !== 0) return; // Skip label on mobile
+                this.ctx.fillText(label, x, this.height - this.padding.bottom + 8);
+            });
+        }
+
+        // Y Axis Labels
+        this.ctx.textAlign = 'right';
+        this.ctx.textBaseline = 'middle';
+        const steps = 5;
+        for (let i = 0; i <= steps; i++) {
+            const val = Math.round(maxVal - (maxVal / steps) * i);
+            const y = this.padding.top + (this.chartHeight / steps) * i;
+            this.ctx.fillText(val, this.padding.left - 10, y);
+        }
+    }
+
+    drawAreaChart(data, labels, color = '#5B5FED') {
+        this.clear();
+        const max = Math.ceil(Math.max(...data) * 1.1); // add 10% headroom
         
-        const max = Math.max(...data.map(d => Math.max(...d.values)));
+        this.drawGrid();
+        this.drawAxes(labels, max);
+
+        const step = this.chartWidth / (data.length - 1);
         
-        data.forEach((group, groupIndex) => {
-            group.values.forEach((value, barIndex) => {
-                const x = padding + groupIndex * barWidth * 4 + barIndex * barWidth;
-                const barHeight = (value / max) * chartHeight;
-                const y = height - padding - barHeight;
+        // Draw Fill
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.padding.left, this.height - this.padding.bottom);
+        
+        data.forEach((value, i) => {
+            const x = this.padding.left + i * step;
+            const y = this.padding.top + this.chartHeight - (value / max) * this.chartHeight;
+            this.ctx.lineTo(x, y);
+        });
+        
+        this.ctx.lineTo(this.width - this.padding.right, this.height - this.padding.bottom);
+        this.ctx.lineTo(this.padding.left, this.height - this.padding.bottom);
+        this.ctx.closePath();
+        
+        const gradient = this.ctx.createLinearGradient(0, this.padding.top, 0, this.height - this.padding.bottom);
+        gradient.addColorStop(0, color + '40'); // 25% opacity
+        gradient.addColorStop(1, color + '00'); // 0% opacity
+        this.ctx.fillStyle = gradient;
+        this.ctx.fill();
+        
+        // Draw Line
+        this.ctx.beginPath();
+        data.forEach((value, i) => {
+            const x = this.padding.left + i * step;
+            const y = this.padding.top + this.chartHeight - (value / max) * this.chartHeight;
+            if (i === 0) this.ctx.moveTo(x, y);
+            else this.ctx.bezierCurveTo(
+                x - step / 2, this.padding.top + this.chartHeight - (data[i-1] / max) * this.chartHeight,
+                x - step / 2, y,
+                x, y
+            );
+        });
+        this.ctx.strokeStyle = color;
+        this.ctx.lineWidth = 3;
+        this.ctx.stroke();
+
+        // Draw Points
+        this.ctx.fillStyle = '#FFFFFF';
+        data.forEach((value, i) => {
+            const x = this.padding.left + i * step;
+            const y = this.padding.top + this.chartHeight - (value / max) * this.chartHeight;
+            
+            this.ctx.beginPath();
+            this.ctx.arc(x, y, 4, 0, Math.PI * 2);
+            this.ctx.fill();
+            this.ctx.stroke();
+        });
+    }
+
+    drawBarChart(datasets, labels) {
+        this.clear();
+        const allValues = datasets.flatMap(d => d.values);
+        const max = Math.ceil(Math.max(...allValues) * 1.1);
+        
+        this.drawGrid();
+        this.drawAxes(labels, max);
+
+        const groupWidth = this.chartWidth / labels.length;
+        const barWidth = groupWidth * 0.3; // 30% of group width
+        const spacing = groupWidth * 0.1;
+
+        datasets.forEach((dataset, setIndex) => {
+            dataset.values.forEach((value, i) => {
+                // Calculate center of group, then offset based on set index
+                // Assuming 2 datasets for now
+                const groupCenter = this.padding.left + i * groupWidth + groupWidth / 2;
+                const offset = setIndex === 0 ? -(barWidth + spacing/2) : (spacing/2);
                 
-                this.ctx.fillStyle = group.colors[barIndex];
-                this.ctx.fillRect(x, y, barWidth * 0.8, barHeight);
+                const x = groupCenter + offset;
+                const barHeight = (value / max) * this.chartHeight;
+                const y = this.height - this.padding.bottom - barHeight;
+                
+                this.ctx.fillStyle = dataset.color;
+                
+                // Draw rounded top bar
+                this.ctx.beginPath();
+                this.ctx.roundRect(x, y, barWidth, barHeight, [4, 4, 0, 0]);
+                this.ctx.fill();
             });
         });
     }
 
-    drawLineChart(data, color = '#00BCD4') {
-        const width = this.canvas.width / 2;
-        const height = this.canvas.height / 2;
-        const padding = 10;
-        const chartHeight = height - padding * 2;
-        const chartWidth = width - padding * 2;
-        
-        const max = Math.max(...data);
-        const step = chartWidth / (data.length - 1);
-        
-        this.ctx.beginPath();
-        data.forEach((value, i) => {
-            const x = padding + i * step;
-            const y = height - padding - (value / max) * chartHeight;
-            if (i === 0) this.ctx.moveTo(x, y);
-            else this.ctx.lineTo(x, y);
-        });
-        this.ctx.strokeStyle = color;
-        this.ctx.lineWidth = 2;
-        this.ctx.stroke();
-    }
-
-    drawDoughnutChart(data, colors) {
-        const width = this.canvas.width / 2;
-        const height = this.canvas.height / 2;
-        const centerX = width / 2;
-        const centerY = height / 2;
-        const radius = Math.min(width, height) / 2 - 20;
-        const innerRadius = radius * 0.6;
+    drawDoughnutChart(data, colors, labels) {
+        this.clear();
+        const centerX = this.width / 2;
+        const centerY = this.height / 2;
+        const radius = Math.min(this.chartWidth, this.chartHeight) / 2;
+        const innerRadius = radius * 0.75;
         
         const total = data.reduce((a, b) => a + b, 0);
         let currentAngle = -Math.PI / 2;
@@ -115,414 +172,184 @@ class Chart {
             this.ctx.closePath();
             this.ctx.fill();
             
+            // Draw label lines if needed, or simple legend
             currentAngle += sliceAngle;
         });
-        
-        // Center circle
-        this.ctx.fillStyle = '#FFFFFF';
-        this.ctx.beginPath();
-        this.ctx.arc(centerX, centerY, innerRadius, 0, Math.PI * 2);
-        this.ctx.fill();
-        
-        // Icon in center
-        this.ctx.fillStyle = '#E9ECEF';
-        this.ctx.beginPath();
-        this.ctx.arc(centerX, centerY, innerRadius * 0.5, 0, Math.PI * 2);
-        this.ctx.fill();
-    }
-
-    drawMiniSparkline(data, color = '#00C853') {
-        const width = this.canvas.width / 2;
-        const height = this.canvas.height / 2;
-        const max = Math.max(...data);
-        const step = width / (data.length - 1);
-        
-        this.ctx.beginPath();
-        data.forEach((value, i) => {
-            const x = i * step;
-            const y = height - (value / max) * height;
-            if (i === 0) this.ctx.moveTo(x, y);
-            else this.ctx.lineTo(x, y);
-        });
-        this.ctx.strokeStyle = color;
-        this.ctx.lineWidth = 2;
-        this.ctx.stroke();
     }
 }
 
 // ==================== DATA ====================
-// Data related to Home page activities and Schedule page events
-const trendingAds = [
-    { 
-        title: 'Weekly Deals Post - Facebook & Zalo', 
-        date: 'Published on Mon, 10:00 AM (from Schedule)', 
-        value: '245K', 
-        data: [4, 6, 5, 7, 6, 8, 7] 
-    },
-    { 
-        title: 'Product Review Video - YouTube', 
-        date: 'Published 2 days ago (from Recent Activities)', 
-        value: '189K', 
-        data: [3, 5, 4, 6, 5, 7, 6] 
-    },
-    { 
-        title: 'Cooking with Chef John - Livestream', 
-        date: 'Scheduled for Wed, 5:00 PM (from Home)', 
-        value: '156K', 
-        data: [5, 7, 6, 8, 7, 9, 8] 
-    },
-    { 
-        title: 'New Arrivals Livestream - TikTok & YouTube', 
-        date: 'Scheduled for Wed, 7:00 PM (from Schedule)', 
-        value: '134K', 
-        data: [4, 5, 6, 7, 6, 8, 7] 
-    },
-    { 
-        title: 'Product Showcase Video - Multi-platform', 
-        date: 'Scheduled for Fri, 2:00 PM (from Schedule)', 
-        value: '112K', 
-        data: [3, 4, 5, 6, 5, 7, 6] 
-    }
-];
+// Mock Data for Professional Charts
+const viewsData = {
+    daily: [1420, 1680, 2100, 1850, 2400, 2150, 2800],
+    weekly: [12500, 14200, 11800, 15600, 18900, 17500, 21000],
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+};
 
-
-const goalData = [
-    { platform: 'YouTube', type: 'Subscribers', value: '45.2K/50K', icon: 'Y', color: 'instagram' },
-    { platform: 'Facebook', type: 'Followers', value: '38.5K/40K', icon: 'F', color: 'facebook' },
-    { platform: 'TikTok', type: 'Engagement', value: '22.1K/25K', icon: 'T', color: 'twitter' },
-    { platform: 'Zalo', type: 'Followers', value: '15.8K/20K', icon: 'Z', color: 'instagram' }
-];
-
-const performedCampaigns = [
-    { 
-        id: '#CONTENT001', 
-        title: 'Weekly Deals Promotion Campaign (Mon 10:00 AM)', 
-        conversion: '6.8%', 
-        engagement: '245K' 
-    },
-    { 
-        id: '#CONTENT002', 
-        title: 'Product Review Series (Recent Activities)', 
-        conversion: '5.2%', 
-        engagement: '189K' 
-    },
-    { 
-        id: '#CONTENT003', 
-        title: 'Live Streaming Events (Multi-platform)', 
-        conversion: '8.9%', 
-        engagement: '156K' 
-    },
-    { 
-        id: '#CONTENT004', 
-        title: 'Weekend Special Livestream (Sat 8:00 PM)', 
-        conversion: '7.3%', 
-        engagement: '198K' 
-    }
-];
-
-// ==================== COUNTER ANIMATION ====================
-function animateValue(element, target, duration = 2000, suffix = '') {
-    const start = 0;
-    const increment = target / (duration / 16);
-    let current = start;
-    
-    const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) {
-            current = target;
-            clearInterval(timer);
-        }
-        
-        if (target >= 1000000) {
-            element.textContent = (current / 1000).toFixed(0) + ',123k';
-        } else if (target >= 1000) {
-            element.textContent = (current / 1000).toFixed(0) + 'K';
-        } else {
-            element.textContent = Math.floor(current).toLocaleString() + suffix;
-        }
-    }, 16);
-}
-
-// ==================== RENDER FUNCTIONS ====================
-function renderTrendingAds() {
-    const container = document.getElementById('trendingList');
-    container.innerHTML = '';
-    
-    trendingAds.forEach(ad => {
-        const item = document.createElement('div');
-        item.className = 'trending-item';
-        item.innerHTML = `
-            <div class="trending-content">
-                <h4>${ad.title}</h4>
-                <p>${ad.date}</p>
-            </div>
-            <div class="trending-stats">
-                <canvas class="trending-chart" width="60" height="30"></canvas>
-                <div class="trending-value">${ad.value}</div>
-            </div>
-        `;
-        container.appendChild(item);
-        
-        // Draw mini chart
-        const canvas = item.querySelector('canvas');
-        const chart = new Chart(canvas);
-        chart.drawMiniSparkline(ad.data);
-    });
-}
-
-function renderGoals() {
-    const container = document.getElementById('goalList');
-    container.innerHTML = '';
-    
-    goalData.forEach(goal => {
-        const item = document.createElement('div');
-        item.className = 'goal-item';
-        item.innerHTML = `
-            <div class="goal-platform">
-                <div class="platform-icon ${goal.color}">${goal.icon}</div>
-                <div class="platform-info">
-                    <h4>${goal.platform}</h4>
-                    <p>${goal.type}</p>
-                </div>
-            </div>
-            <div class="goal-value">${goal.value}</div>
-        `;
-        container.appendChild(item);
-    });
-}
-
-function renderPerformed() {
-    const container = document.getElementById('performedList');
-    container.innerHTML = '';
-    
-    performedCampaigns.forEach(campaign => {
-        const item = document.createElement('div');
-        item.className = 'performed-item';
-        item.innerHTML = `
-            <div class="performed-header">
-                <span class="performed-id">${campaign.id}</span>
-            </div>
-            <div class="performed-title">${campaign.title}</div>
-            <div class="performed-stats">
-                <div class="performed-stat">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="8.5" cy="7" r="4"></circle>
-                        <polyline points="17 11 19 13 23 9"></polyline>
-                    </svg>
-                    Conversion: ${campaign.conversion}
-                </div>
-                <div class="performed-stat">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                    Engagement: ${campaign.engagement}
-                </div>
-            </div>
-        `;
-        container.appendChild(item);
-    });
-}
-
-// ==================== TAB SWITCHING ====================
-const tabs = document.querySelectorAll('.tab');
-tabs.forEach(tab => {
-    tab.addEventListener('click', function() {
-        tabs.forEach(t => t.classList.remove('active'));
-        this.classList.add('active');
-        showNotification(`Switched to ${this.textContent} view`, 'info');
-        setTimeout(() => initCharts(), 300);
-    });
-});
-
-// Download button handler
-const downloadBtn = document.querySelector('.btn-download');
-if (downloadBtn) {
-    downloadBtn.addEventListener('click', () => {
-        showNotification('Downloading CSV file...', 'info');
-        setTimeout(() => showNotification('CSV downloaded!', 'success'), 1500);
-    });
-}
-
-// ==================== INITIALIZE CHARTS ====================
-function initCharts() {
-    // Click Summary Chart
-    const clickCanvas = document.getElementById('clickChart');
-    const clickChart = new Chart(clickCanvas);
-    clickChart.drawAreaChart([
-        200, 400, 300, 500, 400, 600, 500, 700, 600, 800, 700, 900
-    ], '#4A90E2');
-    
-    // Engagement Chart
-    const engagementCanvas = document.getElementById('engagementChart');
-    const engagementChart = new Chart(engagementCanvas);
-    engagementChart.drawBarChart([
-        { values: [45, 52, 3], colors: ['#FF5252', '#4A90E2', '#00BCD4'] },
-        { values: [40, 48, 5], colors: ['#FF5252', '#4A90E2', '#00BCD4'] },
-        { values: [50, 45, 2], colors: ['#FF5252', '#4A90E2', '#00BCD4'] },
-        { values: [42, 50, 4], colors: ['#FF5252', '#4A90E2', '#00BCD4'] },
-        { values: [48, 46, 3], colors: ['#FF5252', '#4A90E2', '#00BCD4'] },
-        { values: [45, 52, 3], colors: ['#FF5252', '#4A90E2', '#00BCD4'] },
-        { values: [47, 49, 2], colors: ['#FF5252', '#4A90E2', '#00BCD4'] }
-    ]);
-    
-    // Balance Chart
-    const balanceCanvas = document.getElementById('balanceChart');
-    const balanceChart = new Chart(balanceCanvas);
-    balanceChart.drawLineChart([20, 40, 30, 50, 45, 60, 55, 70], '#00C853');
-    
-    // Campaign Chart
-    const campaignCanvas = document.getElementById('campaignChart');
-    const campaignChart = new Chart(campaignCanvas);
-    campaignChart.drawLineChart([30, 50, 45, 60, 55, 70, 65, 80], '#00C853');
-    
-    // Target Chart
-    const targetCanvas = document.getElementById('targetChart');
-    const targetChart = new Chart(targetCanvas);
-    targetChart.drawDoughnutChart(
-        [35, 25, 20, 20],
-        ['#4A90E2', '#FF9800', '#9C27B0', '#00C853']
-    );
-    
-    // Insight Chart
-    const insightCanvas = document.getElementById('insightChart');
-    const insightChart = new Chart(insightCanvas);
-    insightChart.drawLineChart([
-        30, 45, 35, 50, 40, 55, 45, 60, 50, 65, 55, 70
-    ], '#4A90E2');
-}
-
-// ==================== LOGOUT ====================
-document.getElementById('logoutBtn').addEventListener('click', function(e) {
-    e.preventDefault();
-    if (confirm('Are you sure you want to logout?')) {
-        showNotification('Logging out...', 'info');
-        setTimeout(() => {
-            window.location.href = 'login.html';
-        }, 1000);
-    }
-});
-
-// ==================== NOTIFICATION ====================
-function showNotification(message, type = 'info') {
-    const colors = {
-        success: '#00C853',
-        error: '#FF5252',
-        info: '#4A90E2'
-    };
-    
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${colors[type]};
-        color: white;
-        padding: 16px 24px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        font-size: 14px;
-        font-weight: 500;
-        z-index: 10000;
-        animation: slideIn 0.3s ease;
-    `;
-    notification.textContent = message;
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-        notification.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => notification.remove(), 300);
-    }, 3000);
-}
-
-// ==================== ANIMATIONS ====================
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideIn {
-        from { transform: translateX(400px); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-    }
-    @keyframes slideOut {
-        from { transform: translateX(0); opacity: 1; }
-        to { transform: translateX(400px); opacity: 0; }
-    }
-`;
-document.head.appendChild(style);
-
-// ==================== LOADING STATE ====================
-function showLoadingState() {
-    const widgets = document.querySelectorAll('.widget');
-    widgets.forEach(widget => {
-        widget.style.opacity = '0.5';
-        widget.style.pointerEvents = 'none';
-    });
-}
-
-function hideLoadingState() {
-    const widgets = document.querySelectorAll('.widget');
-    widgets.forEach(widget => {
-        widget.style.opacity = '1';
-        widget.style.pointerEvents = 'auto';
-    });
-}
-
-// ==================== DATA REFRESH ====================
-function refreshData() {
-    showLoadingState();
-    showNotification('Refreshing data...', 'info');
-    
-    setTimeout(() => {
-        // Re-animate counters
-        animateValue(document.getElementById('clickCount'), 1200 + Math.floor(Math.random() * 100));
-        animateValue(document.getElementById('balance'), 244.55 + Math.random() * 10, 2000, '.55');
-        animateValue(document.getElementById('campaignCount'), 124 + Math.floor(Math.random() * 10));
-        
-        // Re-render lists
-        renderTrendingAds();
-        renderGoals();
-        renderPerformed();
-        
-        hideLoadingState();
-        showNotification('Data refreshed successfully!', 'success');
-    }, 1500);
-}
-
-// Add refresh button functionality
-window.addEventListener('load', () => {
-    // Add keyboard shortcut for refresh (Ctrl+R or Cmd+R)
-    document.addEventListener('keydown', (e) => {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
-            e.preventDefault();
-            refreshData();
-        }
-    });
-});
+const engagementData = {
+    mobile: [65, 55, 80, 45, 70],
+    desktop: [45, 35, 60, 25, 50],
+    labels: ['Likes', 'Shares', 'Comments', 'Saves', 'Clicks']
+};
 
 // ==================== INITIALIZATION ====================
 window.addEventListener('load', () => {
-    // Animate counters
-    animateValue(document.getElementById('clickCount'), 1200);
-    animateValue(document.getElementById('balance'), 244.55, 2000, '.55');
-    animateValue(document.getElementById('campaignCount'), 124);
-    
-    // Initialize charts
+    // Animate KPI Counters
+    animateCounter('clickCount', 84250);
+    animateCounter('balance', 12450.50);
+    animateCounter('campaignCount', 24);
+
+    renderLists();
     initCharts();
-    
-    // Render lists
-    renderTrendingAds();
-    renderGoals();
-    renderPerformed();
-    
-    showNotification('Analytics dashboard loaded', 'success');
-    
-    // Auto-refresh data every 5 minutes
-    setInterval(() => {
-        refreshData();
-    }, 300000); // 5 minutes
+
+    // Chart Periods Toggle
+    document.querySelectorAll('.chart-period').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const btns = document.querySelectorAll('.chart-period');
+            btns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Update Chart
+            const isWeekly = this.textContent === 'Weekly';
+            const canvas = document.getElementById('clickChart');
+            const chart = new Chart(canvas);
+            const data = isWeekly ? viewsData.weekly : viewsData.daily;
+            chart.drawAreaChart(data, viewsData.labels, '#5B5FED');
+        });
+    });
+
+    // Date Selectors
+    document.querySelectorAll('.date-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
 });
 
-// Resize charts on window resize
+// Resize handler
+let resizeTimer;
 window.addEventListener('resize', () => {
-    initCharts();
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(initCharts, 250); // Debounce
 });
+
+// ==================== HELPER FUNCTIONS ====================
+function initCharts() {
+    // 1. Views Summary (Area Chart)
+    const clickCanvas = document.getElementById('clickChart');
+    if (clickCanvas) {
+        const chart = new Chart(clickCanvas);
+        chart.drawAreaChart(viewsData.daily, viewsData.labels, '#5B5FED');
+    }
+
+    // 2. Engagement (Bar Chart)
+    const engCanvas = document.getElementById('engagementChart');
+    if (engCanvas) {
+        const chart = new Chart(engCanvas);
+        chart.drawBarChart([
+            { values: engagementData.mobile, color: '#5B5FED' },
+            { values: engagementData.desktop, color: '#E0E1FC' }
+        ], engagementData.labels);
+
+        // Render Legend Manually
+        const legend = document.getElementById('engagementLegend');
+        if (legend) {
+            legend.innerHTML = `
+                <div class="legend-item"><span class="dot" style="background:#5B5FED"></span> Mobile</div>
+                <div class="legend-item"><span class="dot" style="background:#E0E1FC"></span> Desktop</div>
+            `;
+        }
+    }
+
+    // 3. Target (Doughnut)
+    const targetCanvas = document.getElementById('targetChart');
+    if (targetCanvas) {
+        const chart = new Chart(targetCanvas, { padding: { top:10, right:10, bottom:10, left:10 } });
+        chart.drawDoughnutChart([35, 40, 25], ['#5B5FED', '#00C853', '#FF9800']);
+    }
+}
+
+function renderLists() {
+    // Trending List
+    const trendingList = document.getElementById('trendingList');
+    if (trendingList) {
+        const trendingItems = [
+            { title: 'Summer Sale Post', type: 'Instagram', val: '24.5K', trend: '+12%' },
+            { title: 'Tech Review 2024', type: 'YouTube', val: '18.2K', trend: '+8%' },
+            { title: 'Weekly Newsletter', type: 'Email', val: '12.1K', trend: '+5%' }
+        ];
+        
+        trendingList.innerHTML = trendingItems.map(item => `
+            <div class="trending-item">
+                <div class="trending-content">
+                    <h4>${item.title}</h4>
+                    <p>${item.type}</p>
+                </div>
+                <div class="trending-right">
+                    <div class="trending-value">${item.val}</div>
+                    <span class="trend positive">${item.trend}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Top Content List
+    const performedList = document.getElementById('performedList');
+    if (performedList) {
+        const topItems = [
+            { title: 'Top 10 Gadgets 2024', cr: '4.2%', views: '150K' },
+            { title: 'Python Tutorial for Beginners', cr: '3.8%', views: '120K' },
+            { title: 'Japan Travel Vlog', cr: '5.1%', views: '200K' }
+        ];
+
+        performedList.innerHTML = topItems.map(item => `
+            <div class="performed-item">
+                <div class="performed-title">${item.title}</div>
+                <div class="performed-stats">
+                    <div class="stat-badge blue">CR: ${item.cr}</div>
+                    <div class="stat-badge gray">Views: ${item.views}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Goals List
+    const goalList = document.getElementById('goalList');
+    if (goalList) {
+        const goals = [
+            { name: 'IG Growth', val: '85%', color: '#5B5FED' },
+            { name: 'Revenue', val: '92%', color: '#00C853' },
+            { name: 'Users', val: '78%', color: '#FF9800' }
+        ];
+        
+        goalList.innerHTML = goals.map(item => `
+            <div class="goal-item">
+                <div class="goal-info">
+                    <div class="goal-dot" style="background: ${item.color}"></div>
+                    <span class="goal-name">${item.name}</span>
+                </div>
+                <span class="goal-val">${item.val}</span>
+            </div>
+        `).join('');
+    }
+}
+
+function animateCounter(id, target) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    
+    // Simple mock animation logic
+    el.textContent = target.toLocaleString(); 
+}
+
+// Logout Logic
+const logoutBtn = document.getElementById('logoutBtn');
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if(confirm('Are you sure you want to logout?')) {
+            window.location.href = 'login.html';
+        }
+    });
+}

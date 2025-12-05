@@ -169,6 +169,58 @@
             </div>
         </div>
 
+        <!-- Content Management Section -->
+        <div class="content-management-section">
+            <div class="section-header">
+                <h2>Content Management</h2>
+                <div class="section-actions">
+                    <div class="search-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" id="contentSearch" placeholder="Search content...">
+                    </div>
+                    <select id="contentFilter">
+                        <option value="all">All Status</option>
+                        <option value="published">Published</option>
+                        <option value="draft">Draft</option>
+                        <option value="scheduled">Scheduled</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="content-table-container">
+                <table class="content-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Views</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="contentTableBody">
+                        <!-- Rows will be populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination (Mock) -->
+            <div class="pagination">
+                <span class="page-info">Showing 1-10 of 24 items</span>
+                <div class="page-controls">
+                    <button class="btn-page" disabled>&lt;</button>
+                    <button class="btn-page active">1</button>
+                    <button class="btn-page">2</button>
+                    <button class="btn-page">3</button>
+                    <button class="btn-page">&gt;</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Content Grid -->
         <div class="content-grid">
             <!-- Recent Activities -->
@@ -352,6 +404,45 @@
             </div>
         </div>
     </main>
+
+    <!-- Content Modal -->
+    <div class="modal" id="contentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Create New Content</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="contentForm">
+                    <input type="hidden" id="contentId">
+                    <div class="form-group">
+                        <label for="contentTitle">Title</label>
+                        <input type="text" id="contentTitle" required placeholder="Enter content title">
+                    </div>
+                    <div class="form-group">
+                        <label for="contentCategory">Category</label>
+                        <select id="contentCategory">
+                            <option value="Article">Article</option>
+                            <option value="Video">Video</option>
+                            <option value="Livestream">Livestream</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="contentStatus">Status</label>
+                        <select id="contentStatus">
+                            <option value="Draft">Draft</option>
+                            <option value="Published">Published</option>
+                            <option value="Scheduled">Scheduled</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary close-modal-btn">Cancel</button>
+                <button class="btn-primary" id="saveContentBtn">Save Content</button>
+            </div>
+        </div>
+    </div>
 
     <script src="js/script.js"></script>
 </body>

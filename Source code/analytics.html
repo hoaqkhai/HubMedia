@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analytics - Hub Media</title>
-    <meta name="description" content="Advanced analytics dashboard with comprehensive metrics">
+    <title>Analytics Dashboard - Hub Media</title>
+    <meta name="description" content="Premium analytics dashboard for content performance">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/analytics.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -80,205 +81,158 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <!-- Dashboard Grid -->
-        <div class="dashboard-grid">
-            <!-- Click Summary - Large -->
-            <div class="widget widget-large">
-                <div class="widget-header">
-                    <div>
-                        <h3>Content Views Summary</h3>
-                        <p class="widget-description">Tổng lượt xem nội dung từ tất cả các nền tảng</p>
-                        <div class="tabs">
-                            <button class="tab active">Monthly</button>
-                            <button class="tab">Weekly</button>
-                            <button class="tab">Daily</button>
-                        </div>
-                    </div>
-                    <button class="btn-download">Download CSV</button>
+        <!-- Dashboard Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1>Analytics Overview</h1>
+                <p>Track your content performance and growth</p>
+            </div>
+            <div class="header-right">
+                <div class="date-selector">
+                    <button class="date-btn active">Last 7 Days</button>
+                    <button class="date-btn">Last 30 Days</button>
+                    <button class="date-btn">Custom</button>
                 </div>
-                <div class="widget-body">
-                    <div class="big-stat">
-                        <span class="big-number" id="clickCount">0</span>
-                        <span class="stat-trend positive">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-                                <polyline points="17 6 23 6 23 12"></polyline>
-                            </svg>
-                            +9% from last month
-                        </span>
-                    </div>
-                    <canvas id="clickChart"></canvas>
-                    <div class="chart-marker">
-                        <span class="marker-value">675,451</span>
-                        <span class="marker-date">5 March 2022</span>
-                    </div>
+                <button class="btn-download">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Export Report
+                </button>
+            </div>
+        </header>
+
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-icon blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </div>
+                <div class="kpi-content">
+                    <h3>Total Views</h3>
+                    <div class="kpi-value" id="clickCount">0</div>
+                    <span class="trend positive">+12.5% vs last period</span>
                 </div>
             </div>
-
-            <!-- Trending Ads -->
-            <div class="widget widget-trending">
-                <div class="widget-header">
-                    <h3>Top Performing Content</h3>
-                    <p class="widget-description">Nội dung có hiệu suất cao nhất tuần này</p>
-                    <button class="btn-more">⋮</button>
+            <div class="kpi-card">
+                <div class="kpi-icon green">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
                 </div>
-                <div class="widget-body">
-                    <div class="trending-list" id="trendingList">
-                        <!-- Will be populated by JS -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Ads Engagement -->
-            <div class="widget">
-                <div class="widget-header">
-                    <h3>Platform Engagement</h3>
-                    <p class="widget-description">Phân bố tương tác theo nền tảng</p>
-                    <button class="btn-more">⋮</button>
-                </div>
-                <div class="widget-body">
-                    <canvas id="engagementChart"></canvas>
-                    <div class="engagement-legend">
-                        <div class="legend-item">
-                            <span class="dot" style="background: #FF5252"></span>
-                            <span>45% Instagram</span>
-                        </div>
-                        <div class="legend-item">
-                            <span class="dot" style="background: #4A90E2"></span>
-                            <span>52% Facebook</span>
-                        </div>
-                        <div class="legend-item">
-                            <span class="dot" style="background: #00BCD4"></span>
-                            <span>3% Twitter</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Your Balance -->
-            <div class="widget widget-balance">
-                <div class="widget-header">
+                <div class="kpi-content">
                     <h3>Total Revenue</h3>
-                    <p class="widget-description">Doanh thu từ quảng cáo và livestream</p>
-                </div>
-                <div class="widget-body">
-                    <div class="balance-amount">$<span id="balance">0</span></div>
-                    <div class="balance-change positive">+2.7% than last week</div>
-                    <canvas id="balanceChart"></canvas>
+                    <div class="kpi-value">$<span id="balance">0</span></div>
+                    <span class="trend positive">+8.2% vs last period</span>
                 </div>
             </div>
-
-            <!-- Total Campaign -->
-            <div class="widget widget-campaign">
-                <div class="widget-header">
-                    <h3>Total Content Published</h3>
-                    <p class="widget-description">Số lượng nội dung đã xuất bản tháng này</p>
+            <div class="kpi-card">
+                <div class="kpi-icon purple">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
                 </div>
-                <div class="widget-body">
-                    <div class="campaign-number" id="campaignCount">0</div>
-                    <div class="campaign-change positive">+4.5% than last week</div>
-                    <canvas id="campaignChart"></canvas>
+                <div class="kpi-content">
+                    <h3>Active Campaigns</h3>
+                    <div class="kpi-value" id="campaignCount">0</div>
+                    <span class="trend neutral">0% vs last period</span>
                 </div>
             </div>
-
-            <!-- Campaign Goal Summary -->
-            <div class="widget widget-goals">
-                <div class="widget-header">
-                    <h3>Platform Growth Goals</h3>
-                    <p class="widget-description">Mục tiêu tăng trưởng các nền tảng</p>
+            <div class="kpi-card">
+                <div class="kpi-icon orange">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
                 </div>
-                <div class="widget-body">
-                    <div class="goal-list" id="goalList">
-                        <!-- Will be populated by JS -->
+                <div class="kpi-content">
+                    <h3>New Followers</h3>
+                    <div class="kpi-value">1,250</div>
+                    <span class="trend positive">+5.3% vs last period</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-grid">
+            <!-- Main View Chart -->
+            <div class="chart-card large">
+                <div class="card-header">
+                    <h3>Content Views Summary</h3>
+                    <div class="chart-actions">
+                        <button class="chart-period active">Daily</button>
+                        <button class="chart-period">Weekly</button>
                     </div>
                 </div>
-            </div>
-
-            <!-- Most Performed Campaign -->
-            <div class="widget widget-performed">
-                <div class="widget-header">
-                    <h3>Best Performing Content</h3>
-                    <p class="widget-description">Chiến dịch có hiệu suất tốt nhất</p>
-                </div>
-                <div class="widget-body">
-                    <div class="performed-list" id="performedList">
-                        <!-- Will be populated by JS -->
-                    </div>
+                <div class="chart-body">
+                    <canvas id="clickChart"></canvas>
                 </div>
             </div>
 
-            <!-- Target Statistics -->
-            <div class="widget widget-target">
-                <div class="widget-header">
-                    <h3>Target Statistics</h3>
-                    <p class="widget-description">Phân tích mục tiêu theo loại nội dung</p>
+            <!-- Platform Distribution -->
+            <div class="chart-card">
+                <div class="card-header">
+                    <h3>Platform Engagement</h3>
                 </div>
-                <div class="widget-body">
+                <div class="chart-body">
+                    <canvas id="engagementChart"></canvas>
+                    <div class="custom-legend" id="engagementLegend"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Stats Grid -->
+        <div class="details-grid">
+            <!-- Top Content -->
+            <div class="detail-card">
+                <div class="card-header">
+                    <h3>Top Performing Content</h3>
+                    <a href="#" class="view-all">View All</a>
+                </div>
+                <div class="content-list" id="performedList">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="detail-card">
+                <div class="card-header">
+                    <h3>Trending Activities</h3>
+                </div>
+                <div class="activity-list" id="trendingList">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Target Stats -->
+            <div class="detail-card">
+                <div class="card-header">
+                    <h3>Targets & Goals</h3>
+                    <button class="icon-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="1"></circle>
+                            <circle cx="19" cy="12" r="1"></circle>
+                            <circle cx="5" cy="12" r="1"></circle>
+                        </svg>
+                    </button>
+                </div>
+                <div class="chart-body doughnut-container">
                     <canvas id="targetChart"></canvas>
-                    <div class="target-legend">
-                        <div class="legend-row">
-                            <div class="legend-item">
-                                <span class="dot" style="background: #4A90E2"></span>
-                                <span>Main Card</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="dot" style="background: #FF9800"></span>
-                                <span>Orange Card</span>
-                            </div>
-                        </div>
-                        <div class="legend-row">
-                            <div class="legend-item">
-                                <span class="dot" style="background: #9C27B0"></span>
-                                <span>Purple Card</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="dot" style="background: #00C853"></span>
-                                <span>Green Card</span>
-                            </div>
-                        </div>
+                    <div class="target-center-text">
+                        <span class="target-percent">85%</span>
+                        <span class="target-label">Achieved</span>
                     </div>
                 </div>
-            </div>
-
-            <!-- Insight -->
-            <div class="widget widget-insight">
-                <div class="widget-header">
-                    <h3>Content Performance Insights</h3>
-                    <p class="widget-description">Phân tích chi tiết về hiệu suất nội dung</p>
-                </div>
-                <div class="widget-body">
-                    <p class="widget-subtitle">Dữ liệu tổng hợp từ tất cả nền tảng trong 30 ngày qua</p>
-                    <canvas id="insightChart"></canvas>
-                    <div class="insight-stats">
-                        <div class="insight-stat">
-                            <span class="dot" style="background: #4A90E2"></span>
-                            <div>
-                                <div class="stat-value">63,876</div>
-                                <div class="stat-label">Product Sold</div>
-                            </div>
-                        </div>
-                        <div class="insight-stat">
-                            <span class="dot" style="background: #FF9800"></span>
-                            <div>
-                                <div class="stat-value">597,125</div>
-                                <div class="stat-label">Revenue</div>
-                            </div>
-                        </div>
-                        <div class="insight-stat">
-                            <span class="dot" style="background: #00C853"></span>
-                            <div>
-                                <div class="stat-value">$872,335</div>
-                                <div class="stat-label">Profit</div>
-                            </div>
-                        </div>
-                        <div class="insight-stat">
-                            <span class="dot" style="background: #FF5252"></span>
-                            <div>
-                                <div class="stat-value">21,224</div>
-                                <div class="stat-label">Cost Revenue</div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="goal-list-compact" id="goalList">
+                    <!-- Populated by JS -->
                 </div>
             </div>
         </div>
