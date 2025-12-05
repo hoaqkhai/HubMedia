@@ -1,35 +1,24 @@
--- =====================================
--- DATABASE: HubMedia
--- =====================================
-CREATE DATABASE IF NOT EXISTS HubMedia;
-USE HubMedia;
 
--- =======================
--- 1️⃣ BẢNG NGƯỜI DÙNG (AUTH)
--- =======================
 CREATE TABLE users (
-    user_id INT AUTO_INCREMENT PRIMARY KEY,
-    full_name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    password_hash VARCHAR(255),
-    social_provider ENUM('google','facebook','none') DEFAULT 'none',
-    role ENUM('Customer','Moderator','Admin') DEFAULT 'Customer',
-    status ENUM('active','banned') DEFAULT 'active',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  user_id INT AUTO_INCREMENT PRIMARY KEY,
+  full_name VARCHAR(100) NOT NULL,
+  email VARCHAR(100) UNIQUE NOT NULL,
+  password_hash VARCHAR(255),
+  social_provider ENUM('google','facebook','none') DEFAULT 'none',
+  role ENUM('Customer','Moderator','Admin') DEFAULT 'Customer',
+  status ENUM('active','banned') DEFAULT 'active',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE usersessions (
+  session_id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  token VARCHAR(255) NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  expires_at DATETIME,
+  FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE user_sessions (
-    session_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    token VARCHAR(255) UNIQUE,
-    login_time DATETIME DEFAULT CURRENT_TIMESTAMP,
-    logout_time DATETIME NULL,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-);
-
--- =======================
--- 2️⃣ LIVESTREAM & TƯƠNG TÁC
--- =======================
 CREATE TABLE livestreams (
     livestream_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -61,9 +50,7 @@ CREATE TABLE livestream_reactions (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
--- =======================
--- 3️⃣ QUẢN LÝ NỘI DUNG
--- =======================
+
 CREATE TABLE contents (
     content_id INT AUTO_INCREMENT PRIMARY KEY,
     author_id INT NOT NULL,
@@ -98,9 +85,7 @@ CREATE TABLE media_files (
     FOREIGN KEY (content_id) REFERENCES contents(content_id) ON DELETE SET NULL
 );
 
--- =======================
--- 4️⃣ BÌNH LUẬN & DUYỆT NỘI DUNG
--- =======================
+
 CREATE TABLE comments (
     comment_id INT AUTO_INCREMENT PRIMARY KEY,
     content_id INT NOT NULL,
@@ -160,3 +145,16 @@ CREATE TABLE policies (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (admin_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
+
+ALTER DATABASE hoidanit CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+ALTER TABLE users ADD COLUMN login_type VARCHAR(20) DEFAULT 'local';
+
+
+INSERT INTO users (user_id, full_name, email, password_hash, social_provider, role, status, created_at) VALUES
+(1, 'Nguyen Van A', 'nguyenvana@gmail.com', '$2a$12$examplehash1234567890abcdefghi', 'none', 'Customer', 'active', '2024-12-01 10:20:00');
+
+INSERT INTO users (user_id, full_name, email, password_hash, social_provider, role, status, created_at) VALUES
+(2, 'Tran Thi B', 'tranthib@yahoo.com', '$2a$12$examplehashabcdef1234567890xyz', 'facebook', 'Customer', 'active', '2024-12-02 08:15:30');
+
+SELECT * FROM users;
