@@ -1,59 +1,38 @@
-<<<<<<< HEAD
--- =====================================
--- DATABASE: HubMedia
--- =====================================
-CREATE DATABASE IF NOT EXISTS HubMedia;
-USE HubMedia;
+-- 1️⃣ Tạo database nếu chưa tồn tại và chọn database
+CREATE DATABASE IF NOT EXISTS hoidanit CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE hoidanit;
 
--- =======================
--- 1️⃣ BẢNG NGƯỜI DÙNG (AUTH)
--- =======================
-CREATE TABLE users (
+-- 2️⃣ Tắt kiểm tra khóa ngoại để xóa bảng dễ dàng
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- 3️⃣ Xóa tất cả bảng cũ (nếu có)
+DROP TABLE IF EXISTS violation_tags, moderation_actions, moderation_queue, comments, media_files, content_tags, tags, contents, livestream_reactions, livestream_chats, livestreams, usersessions, users;
+
+-- 4️⃣ Tạo bảng chính: users
+CREATE TABLE IF NOT EXISTS users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    password_hash VARCHAR(255),
-    social_provider ENUM('google','facebook','none') DEFAULT 'none',
-    role ENUM('Customer','Moderator','Admin') DEFAULT 'Customer',
-    status ENUM('active','banned') DEFAULT 'active',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
+    email VARCHAR(100) NOT NULL UNIQUE,
+    username VARCHAR(100) UNIQUE DEFAULT NULL,
+    password VARCHAR(255) NOT NULL,
+    social_provider ENUM('google','facebook','none') NOT NULL DEFAULT 'none',
+    role ENUM('Customer','Moderator','Admin') NOT NULL DEFAULT 'Customer',
+    status ENUM('active','banned') NOT NULL DEFAULT 'active',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    login_type VARCHAR(20) DEFAULT 'local'
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-CREATE TABLE user_sessions (
+-- 5️⃣ Tạo bảng liên quan đến users
+CREATE TABLE usersessions (
     session_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    token VARCHAR(255) UNIQUE,
-    login_time DATETIME DEFAULT CURRENT_TIMESTAMP,
-    logout_time DATETIME NULL,
+    token VARCHAR(255) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    expires_at DATETIME,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
--- =======================
--- 2️⃣ LIVESTREAM & TƯƠNG TÁC
--- =======================
-=======
-
-CREATE TABLE users (
-  user_id INT AUTO_INCREMENT PRIMARY KEY,
-  full_name VARCHAR(100) NOT NULL,
-  email VARCHAR(100) UNIQUE NOT NULL,
-  password_hash VARCHAR(255),
-  social_provider ENUM('google','facebook','none') DEFAULT 'none',
-  role ENUM('Customer','Moderator','Admin') DEFAULT 'Customer',
-  status ENUM('active','banned') DEFAULT 'active',
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
-CREATE TABLE usersessions (
-  session_id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT NOT NULL,
-  token VARCHAR(255) NOT NULL,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  expires_at DATETIME,
-  FOREIGN KEY (user_id) REFERENCES users(user_id)
-);
-
->>>>>>> 5247a51d76e8a77a7e757084e5f84ee459ae7d98
+-- 6️⃣ Livestreams và liên quan
 CREATE TABLE livestreams (
     livestream_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -85,13 +64,7 @@ CREATE TABLE livestream_reactions (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
-<<<<<<< HEAD
--- =======================
--- 3️⃣ QUẢN LÝ NỘI DUNG
--- =======================
-=======
-
->>>>>>> 5247a51d76e8a77a7e757084e5f84ee459ae7d98
+-- 7️⃣ Contents, tags và liên kết
 CREATE TABLE contents (
     content_id INT AUTO_INCREMENT PRIMARY KEY,
     author_id INT NOT NULL,
@@ -126,13 +99,7 @@ CREATE TABLE media_files (
     FOREIGN KEY (content_id) REFERENCES contents(content_id) ON DELETE SET NULL
 );
 
-<<<<<<< HEAD
--- =======================
--- 4️⃣ BÌNH LUẬN & DUYỆT NỘI DUNG
--- =======================
-=======
-
->>>>>>> 5247a51d76e8a77a7e757084e5f84ee459ae7d98
+-- 8️⃣ Comments và moderation
 CREATE TABLE comments (
     comment_id INT AUTO_INCREMENT PRIMARY KEY,
     content_id INT NOT NULL,
@@ -168,6 +135,7 @@ CREATE TABLE moderation_actions (
     FOREIGN KEY (comment_id) REFERENCES comments(comment_id) ON DELETE CASCADE
 );
 
+-- 9️⃣ Auto filters và violation tags
 CREATE TABLE auto_filters (
     filter_id INT AUTO_INCREMENT PRIMARY KEY,
     keyword VARCHAR(100),
@@ -184,6 +152,7 @@ CREATE TABLE violation_tags (
     FOREIGN KEY (filter_id) REFERENCES auto_filters(filter_id) ON DELETE CASCADE
 );
 
+-- 🔟 Policies
 CREATE TABLE policies (
     policy_id INT AUTO_INCREMENT PRIMARY KEY,
     admin_id INT NOT NULL,
@@ -192,19 +161,6 @@ CREATE TABLE policies (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (admin_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
-<<<<<<< HEAD
-=======
 
-ALTER DATABASE hoidanit CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
-ALTER TABLE users ADD COLUMN login_type VARCHAR(20) DEFAULT 'local';
-
-
-INSERT INTO users (user_id, full_name, email, password_hash, social_provider, role, status, created_at) VALUES
-(1, 'Nguyen Van A', 'nguyenvana@gmail.com', '$2a$12$examplehash1234567890abcdefghi', 'none', 'Customer', 'active', '2024-12-01 10:20:00');
-
-INSERT INTO users (user_id, full_name, email, password_hash, social_provider, role, status, created_at) VALUES
-(2, 'Tran Thi B', 'tranthib@yahoo.com', '$2a$12$examplehashabcdef1234567890xyz', 'facebook', 'Customer', 'active', '2024-12-02 08:15:30');
-
-SELECT * FROM users;
->>>>>>> 5247a51d76e8a77a7e757084e5f84ee459ae7d98
+-- 11️⃣ Bật lại kiểm tra khóa ngoại
+SET FOREIGN_KEY_CHECKS = 1;
