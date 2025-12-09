@@ -116,14 +116,27 @@ loginForm.addEventListener('submit', async function(e) {
     loginBtn.classList.add('loading');
     loginBtn.disabled = true;
     
+    // Get selected role
+    const selectedRole = document.querySelector('input[name="role"]:checked').value;
+    
     // Simulate API call
     try {
-        await simulateLogin(emailInput.value, passwordInput.value);
+        await simulateLogin(emailInput.value, passwordInput.value, selectedRole);
         
-        // Success - redirect to dashboard
+        // Success - redirect based on role
         showSuccessMessage();
+        
+        // Save role to localStorage
+        localStorage.setItem('userRole', selectedRole);
+        
         setTimeout(() => {
-            window.location.href = 'Index.html';
+            if (selectedRole === 'admin') {
+                window.location.href = 'Index.html';
+            } else {
+                // For customer, currently redirecting to same page or a specific customer dashboard
+                // For now, let's redirect to Index.html but maybe show a different view in reality
+                window.location.href = 'Index.html'; 
+            }
         }, 1500);
         
     } catch (error) {
@@ -135,19 +148,45 @@ loginForm.addEventListener('submit', async function(e) {
 });
 
 // Simulate login API call
-function simulateLogin(email, password) {
+function simulateLogin(email, password, role) {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             // Demo credentials
-            if (email === 'admin' || email === 'admin@example.com') {
-                if (password === 'admin123' || password === 'password') {
-                    resolve({ success: true });
+            
+            // ADMIN LOGIN
+            if (role === 'admin') {
+                if (email === 'admin' || email === 'admin@hubmedia.com') {
+                    if (password === 'admin123') {
+                        resolve({ success: true, role: 'admin' });
+                    } else {
+                        reject({ message: 'Mật khẩu quản trị viên không chính xác' });
+                    }
                 } else {
-                    reject({ message: 'Mật khẩu không chính xác' });
+                     // For security, usually vague, but for demo specific
+                    reject({ message: 'Tài khoản quản trị viên không tồn tại' });
                 }
-            } else {
-                // For demo, accept any valid input
-                resolve({ success: true });
+            } 
+            // CUSTOMER LOGIN
+            else {
+                if (email === 'customer' || email === 'customer@hubmedia.com') {
+                    if (password === 'customer123') {
+                        resolve({ success: true, role: 'customer' });
+                    } else {
+                        reject({ message: 'Mật khẩu khách hàng không chính xác' });
+                    }
+                } else {
+                     // For demo allow generic login for customer if not conflicting with admin keywords, 
+                     // OR enforce strict demo credentials. Let's force strict for clarity as requested.
+                     // Actually, to make it easier for testing, let's allow "customer" / "customer123" 
+                     // AND any other non-admin email that is valid format.
+                     
+                     if (email.includes('admin')) {
+                         reject({ message: 'Vui lòng chọn vai trò Quản trị viên để đăng nhập tài khoản này' });
+                     } else {
+                         // Allow generic customer login for easy testing
+                         resolve({ success: true, role: 'customer' });
+                     }
+                }
             }
         }, 1500);
     });
@@ -205,17 +244,115 @@ document.querySelectorAll('.social-btn').forEach(btn => {
 });
 
 // Forgot password handler
-document.querySelector('.forgot-password').addEventListener('click', function(e) {
+const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+const backToLoginLink = document.getElementById('backToLogin');
+const loginFormContainer = document.getElementById('loginFormContainer');
+const forgotPasswordContainer = document.getElementById('forgotPasswordContainer');
+const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+const resetEmailInput = document.getElementById('resetEmail');
+const resetEmailError = document.getElementById('resetEmailError');
+
+// Show Forgot Password Form
+forgotPasswordLink.addEventListener('click', function(e) {
     e.preventDefault();
     
-    const email = prompt('Vui lòng nhập email của bạn để khôi phục mật khẩu:');
+    // Add animation classes
+    loginFormContainer.classList.add('slide-out-left');
     
-    if (email && validateEmail(email)) {
-        showNotification('Đã gửi link khôi phục mật khẩu đến email của bạn!', 'success');
-    } else if (email) {
-        showNotification('Email không hợp lệ!', 'error');
+    setTimeout(() => {
+        loginFormContainer.classList.add('hidden');
+        loginFormContainer.classList.remove('slide-out-left');
+        
+        forgotPasswordContainer.classList.remove('hidden');
+        forgotPasswordContainer.classList.add('slide-in-right');
+        
+        // Focus on reset email
+        resetEmailInput.focus();
+    }, 500);
+});
+
+// Back to Login Form
+backToLoginLink.addEventListener('click', function(e) {
+    e.preventDefault();
+    
+    forgotPasswordContainer.classList.remove('slide-in-right');
+    forgotPasswordContainer.classList.add('slide-out-right');
+    
+    setTimeout(() => {
+        forgotPasswordContainer.classList.add('hidden');
+        forgotPasswordContainer.classList.remove('slide-out-right');
+        
+        loginFormContainer.classList.remove('hidden');
+        loginFormContainer.classList.add('slide-in-left');
+        
+        setTimeout(() => {
+            loginFormContainer.classList.remove('slide-in-left');
+        }, 500);
+    }, 500);
+});
+
+// Validate reset email on real-time
+resetEmailInput.addEventListener('blur', function() {
+    if (!validateEmail(this.value)) {
+        showError(resetEmailInput, resetEmailError, 'Vui lòng nhập email hợp lệ');
+    } else {
+        hideError(resetEmailInput, resetEmailError);
     }
 });
+
+resetEmailInput.addEventListener('input', function() {
+    if (resetEmailError.classList.contains('show')) {
+        if (validateEmail(this.value)) {
+            hideError(resetEmailInput, resetEmailError);
+        }
+    }
+});
+
+// Handle Reset Password Submit
+forgotPasswordForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Validation
+    if (!validateEmail(resetEmailInput.value)) {
+        showError(resetEmailInput, resetEmailError, 'Vui lòng nhập email hợp lệ');
+        return;
+    }
+    
+    const resetBtn = this.querySelector('.btn-login');
+    resetBtn.classList.add('loading');
+    resetBtn.disabled = true;
+    
+    try {
+        await simulateResetPassword(resetEmailInput.value);
+        
+        showNotification('Đã gửi liên kết khôi phục mật khẩu đến email của bạn!', 'success');
+        
+        // Reset form and go back to login after delay
+        setTimeout(() => {
+            backToLoginLink.click();
+            resetEmailInput.value = '';
+            resetBtn.classList.remove('loading');
+            resetBtn.disabled = false;
+        }, 2000);
+        
+    } catch (error) {
+        showNotification(error.message, 'error');
+        resetBtn.classList.remove('loading');
+        resetBtn.disabled = false;
+    }
+});
+
+function simulateResetPassword(email) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            if (email) {
+                resolve({ success: true });
+            } else {
+                reject({ message: 'Có lỗi xảy ra. Vui lòng thử lại.' });
+            }
+        }, 1500);
+    });
+}
 
 // Signup link handler
 // Signup link handler - Default behavior (navigation) is sufficient

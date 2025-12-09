@@ -91,28 +91,11 @@ body {
     gap: 12px;
 }
 
-.logo-icon {
-    width: 36px;
-    height: 36px;
-    background: linear-gradient(135deg, var(--primary-blue), var(--primary-dark));
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    box-shadow: 0 4px 10px rgba(91, 95, 237, 0.3);
-}
-
-.logo-icon svg {
-    width: 20px;
-    height: 20px;
-}
-
-.logo-text {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--gray-900);
-    letter-spacing: -0.5px;
+.sidebar-logo-image {
+    width: 160px;
+    height: auto;
+    object-fit: contain;
+    display: block;
 }
 
 .main-nav {

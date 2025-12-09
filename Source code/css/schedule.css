@@ -60,26 +60,11 @@ body {
     gap: 12px;
 }
 
-.logo-icon {
-    width: 36px;
-    height: 36px;
-    background: var(--primary-blue);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-}
-
-.logo-icon svg {
-    width: 20px;
-    height: 20px;
-}
-
-.logo-text {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--gray-900);
+.sidebar-logo-image {
+    width: 160px;
+    height: auto;
+    object-fit: contain;
+    display: block;
 }
 
 .main-nav {

@@ -119,6 +119,13 @@ body {
     box-shadow: var(--shadow-md);
 }
 
+.sidebar-logo-image {
+    width: 160px;
+    height: auto;
+    object-fit: contain;
+    display: block;
+}
+
 .kpi-icon {
     width: 48px;
     height: 48px;

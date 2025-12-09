@@ -161,38 +161,25 @@ body {
     margin-bottom: 20px;
 }
 
-.logo-icon {
-    width: 60px;
-    height: 60px;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.logo-image {
+    width: 400px;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
     animation: pulse 3s ease-in-out infinite;
-}
-
-.logo-icon svg {
-    width: 32px;
-    height: 32px;
+    margin-bottom: 20px;
 }
 
 @keyframes pulse {
     0%, 100% {
         transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
     }
     50% {
         transform: scale(1.05);
-        box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0);
+        filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.2));
     }
-}
-
-.logo h1 {
-    font-size: 32px;
-    font-weight: 700;
-    margin: 0;
 }
 
 .tagline {
@@ -755,9 +742,7 @@ body {
         padding: 32px 24px;
     }
     
-    .logo h1 {
-        font-size: 24px;
-    }
+
     
     .tagline {
         font-size: 16px;
