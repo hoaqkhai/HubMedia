@@ -162,5 +162,101 @@ CREATE TABLE policies (
     FOREIGN KEY (admin_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
+CREATE TABLE Calendar (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    date DATE NOT NULL,
+    time TIME NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    platforms JSON,         -- lưu mảng dưới dạng JSON
+    description TEXT
+);
+
+CREATE TABLE streams (
+    stream_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    title VARCHAR(255),
+    is_live BOOLEAN DEFAULT 0,
+    started_at DATETIME,
+    ended_at DATETIME,
+    viewer_count INT DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE chat_messages (
+    message_id INT AUTO_INCREMENT PRIMARY KEY,
+    stream_id INT NOT NULL,
+    user_id INT,
+    author_name VARCHAR(100),
+    text TEXT NOT NULL,
+    is_system BOOLEAN DEFAULT 0,
+    is_approved BOOLEAN DEFAULT 1, -- moderation
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (stream_id) REFERENCES streams(stream_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE user_settings (
+    setting_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+
+    -- General Settings
+    theme ENUM('light', 'dark', 'system') DEFAULT 'light',
+    language VARCHAR(20) DEFAULT 'vi',
+    timezone VARCHAR(50) DEFAULT 'Asia/Ho_Chi_Minh',
+
+    -- Notification Settings
+    email_notif BOOLEAN DEFAULT 1,
+    sms_notif BOOLEAN DEFAULT 0,
+    push_notif BOOLEAN DEFAULT 1,
+
+    -- Security Settings
+    two_factor_enabled BOOLEAN DEFAULT 0,
+
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE user_integrations (
+    integration_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+
+    provider ENUM('google', 'facebook', 'tiktok', 'youtube', 'discord') NOT NULL,
+    account_email VARCHAR(100),
+    access_token TEXT,
+    refresh_token TEXT,
+    connected_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    status ENUM('connected', 'disconnected') DEFAULT 'connected',
+
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE teams (
+    team_id INT AUTO_INCREMENT PRIMARY KEY,
+    team_name VARCHAR(100) NOT NULL,
+    owner_id INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (owner_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE team_members (
+    team_member_id INT AUTO_INCREMENT PRIMARY KEY,
+    team_id INT NOT NULL,
+    user_id INT NOT NULL,
+
+    role ENUM('Owner', 'Admin', 'Editor', 'Viewer') DEFAULT 'Viewer',
+
+    invited_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    joined_at DATETIME DEFAULT NULL,
+    status ENUM('pending', 'active', 'removed') DEFAULT 'pending',
+
+    FOREIGN KEY (team_id) REFERENCES teams(team_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+
 -- 11️⃣ Bật lại kiểm tra khóa ngoại
 SET FOREIGN_KEY_CHECKS = 1;
