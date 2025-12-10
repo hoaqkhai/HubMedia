@@ -37,4 +37,4 @@ Mục tiêu: áp dụng quy trình phát triển phần mềm (Phân tích yêu 
 - **IDE:** Visual Studio Code
 - **CSDL:** MySQL / PostgreSQL
 - **Quản lý phiên bản:** Git + GitHub
-- **Mô hình phát triển:** Agile – Scrum 🚀
+- **Mô hình phát triển:** Waterfall 🚀
