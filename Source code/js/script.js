@@ -146,6 +146,8 @@ function openContentModal(title = 'Create New Content') {
     if (contentModal) {
         document.getElementById('modalTitle').textContent = title;
         contentModal.classList.add('active');
+        // Reset specific new fields
+        resetAdvancedFields();
     }
 }
 
@@ -154,8 +156,108 @@ function closeContentModal() {
         contentModal.classList.remove('active');
         contentForm.reset();
         document.getElementById('contentId').value = '';
+        resetAdvancedFields();
     }
 }
+
+function resetAdvancedFields() {
+    // Reset Media
+    document.getElementById('mediaPreview').classList.add('hidden');
+    document.getElementById('uploadPlaceholder').classList.remove('hidden');
+    document.getElementById('mediaUpload').value = '';
+    
+    // Reset Schedule
+    document.getElementById('schedulePicker').classList.add('hidden');
+    
+    // Reset Char Count
+    document.getElementById('titleCount').textContent = '0/100';
+    
+    // Reset Platforms
+    document.querySelectorAll('input[name="platform"]').forEach(cb => cb.checked = false);
+}
+
+// Advanced Modal Logic
+const uploadZone = document.getElementById('uploadZone');
+const mediaUpload = document.getElementById('mediaUpload');
+const mediaPreview = document.getElementById('mediaPreview');
+const previewImage = document.getElementById('previewImage');
+const removeMediaBtn = document.getElementById('removeMediaBtn');
+const browseText = document.querySelector('.browse-text');
+
+if (uploadZone) {
+    // Drag & Drop
+    uploadZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadZone.classList.add('dragover');
+    });
+
+    uploadZone.addEventListener('dragleave', () => {
+        uploadZone.classList.remove('dragover');
+    });
+
+    uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('dragover');
+        const file = e.dataTransfer.files[0];
+        handleFileSelect(file);
+    });
+
+    // Browse Click
+    uploadZone.addEventListener('click', (e) => {
+        if(e.target !== removeMediaBtn) mediaUpload.click();
+    });
+
+    mediaUpload.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        handleFileSelect(file);
+    });
+
+    removeMediaBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent triggering upload click
+        resetAdvancedFields();
+    });
+}
+
+function handleFileSelect(file) {
+    if (file && file.type.match('image.*')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            previewImage.src = e.target.result;
+            document.getElementById('uploadPlaceholder').classList.add('hidden');
+            mediaPreview.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+    } else if (file && file.type.match('video.*')) {
+        // Simple video placeholder logic
+        alert('Video upload simulation: Video selected');
+        document.getElementById('uploadPlaceholder').classList.add('hidden');
+        mediaPreview.classList.remove('hidden');
+        previewImage.src = 'img/video-placeholder.png'; // Mock placeholder
+    }
+}
+
+// Title Char Count
+const contentTitle = document.getElementById('contentTitle');
+const titleCount = document.getElementById('titleCount');
+if (contentTitle) {
+    contentTitle.addEventListener('input', (e) => {
+        const len = e.target.value.length;
+        titleCount.textContent = `${len}/100`;
+    });
+}
+
+// Schedule Toggle
+const publishOptions = document.querySelectorAll('input[name="publishType"]');
+const schedulePicker = document.getElementById('schedulePicker');
+publishOptions.forEach(radio => {
+    radio.addEventListener('change', (e) => {
+        if (e.target.value === 'schedule') {
+            schedulePicker.classList.remove('hidden');
+        } else {
+            schedulePicker.classList.add('hidden');
+        }
+    });
+});
 
 // Event Listeners
 if (createContentBtn) {
@@ -167,11 +269,22 @@ closeModalBtns.forEach(btn => {
 });
 
 if (saveContentBtn) {
-    saveContentBtn.addEventListener('click', () => {
+    saveContentBtn.addEventListener('click', (e) => {
+        e.preventDefault(); // Prevent accidental form submit
+        
         const id = document.getElementById('contentId').value;
         const title = document.getElementById('contentTitle').value;
         const category = document.getElementById('contentCategory').value;
-        const status = document.getElementById('contentStatus').value;
+        const description = document.getElementById('contentDescription').value;
+        
+        // Get Publish Status
+        const publishType = document.querySelector('input[name="publishType"]:checked').value;
+        let status = 'Draft';
+        if (publishType === 'now') status = 'Published';
+        if (publishType === 'schedule') status = 'Scheduled';
+        
+        // Get Platforms
+        const platforms = Array.from(document.querySelectorAll('input[name="platform"]:checked')).map(cb => cb.value);
         
         if (!title) {
             showNotification('Please enter a title', 'warning');
@@ -194,10 +307,18 @@ if (saveContentBtn) {
                 category,
                 status,
                 date: new Date().toISOString().split('T')[0],
-                views: 0
+                views: 0,
+                // New fields would normally go here
+                platforms: platforms
             };
             contentData.unshift(newItem);
-            showNotification('Content created successfully', 'success');
+            
+            // Show more detailed notification based on action
+            if (platforms.length > 0) {
+                showNotification(`Content created & shared to ${platforms.length} platform(s)!`, 'success');
+            } else {
+                showNotification('Content created successfully', 'success');
+            }
         }
         
         renderContentTable();

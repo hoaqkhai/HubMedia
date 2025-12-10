@@ -308,13 +308,16 @@
 .input-icon {
     position: absolute;
     left: 12px;
-    top: 38px; /* Adjust based on label height */
+    top: 50%;
+    transform: translateY(-50%);
     width: 20px;
     height: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--gray-400);
+    z-index: 2;
+    pointer-events: none;
 }
 .input-icon svg { width: 18px; height: 18px; }
 .social-input input { padding-left: 40px; }

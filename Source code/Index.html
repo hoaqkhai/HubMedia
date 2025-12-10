@@ -410,39 +410,148 @@
 
     <!-- Content Modal -->
     <div class="modal" id="contentModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalTitle">Create New Content</h3>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="contentForm">
-                    <input type="hidden" id="contentId">
-                    <div class="form-group">
-                        <label for="contentTitle">Title</label>
-                        <input type="text" id="contentTitle" required placeholder="Enter content title">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="header-text">
+                        <h3 id="modalTitle">Create New Content</h3>
+                        <p>Share your content across all platforms</p>
                     </div>
-                    <div class="form-group">
-                        <label for="contentCategory">Category</label>
-                        <select id="contentCategory">
-                            <option value="Article">Article</option>
-                            <option value="Video">Video</option>
-                            <option value="Livestream">Livestream</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="contentStatus">Status</label>
-                        <select id="contentStatus">
-                            <option value="Draft">Draft</option>
-                            <option value="Published">Published</option>
-                            <option value="Scheduled">Scheduled</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary close-modal-btn">Cancel</button>
-                <button class="btn-primary" id="saveContentBtn">Save Content</button>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="contentForm">
+                        <input type="hidden" id="contentId">
+                        
+                        <div class="form-grid">
+                            <!-- Left Column: Media -->
+                            <div class="form-column">
+                                <div class="form-group">
+                                    <label>Media Asset</label>
+                                    <div class="upload-zone" id="uploadZone">
+                                        <input type="file" id="mediaUpload" hidden accept="image/*,video/*">
+                                        <div class="upload-content" id="uploadPlaceholder">
+                                            <div class="upload-icon">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                                </svg>
+                                            </div>
+                                            <p>Drag & drop or <span class="browse-text">Browse</span></p>
+                                            <span class="upload-hint">Supports JPG, PNG, MP4</span>
+                                        </div>
+                                        <div class="media-preview hidden" id="mediaPreview">
+                                            <img id="previewImage" src="" alt="Preview">
+                                            <button type="button" class="remove-media" id="removeMediaBtn">&times;</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Platforms</label>
+                                    <div class="platform-grid">
+                                        <label class="platform-checkbox" title="Facebook">
+                                            <input type="checkbox" name="platform" value="facebook">
+                                            <div class="platform-icon fb">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                                                </svg>
+                                            </div>
+                                            <span>Facebook</span>
+                                        </label>
+                                        <label class="platform-checkbox" title="YouTube">
+                                            <input type="checkbox" name="platform" value="youtube">
+                                            <div class="platform-icon yt">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path>
+                                                    <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
+                                                </svg>
+                                            </div>
+                                            <span>YouTube</span>
+                                        </label>
+                                        <label class="platform-checkbox" title="Instagram">
+                                            <input type="checkbox" name="platform" value="instagram">
+                                            <div class="platform-icon ig">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                                                </svg>
+                                            </div>
+                                            <span>Instagram</span>
+                                        </label>
+                                        <label class="platform-checkbox" title="TikTok">
+                                            <input type="checkbox" name="platform" value="tiktok">
+                                            <div class="platform-icon tt">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path>
+                                                </svg>
+                                            </div>
+                                            <span>TikTok</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Right Column: Details -->
+                            <div class="form-column">
+                                <div class="form-group">
+                                    <div class="label-row">
+                                        <label for="contentTitle">Title</label>
+                                        <span class="char-count" id="titleCount">0/100</span>
+                                    </div>
+                                    <input type="text" id="contentTitle" required placeholder="Enter content title" maxlength="100">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="contentCategory">Category</label>
+                                    <div class="select-wrapper">
+                                        <select id="contentCategory">
+                                            <option value="Article">Article</option>
+                                            <option value="Video">Video</option>
+                                            <option value="Livestream">Livestream</option>
+                                        </select>
+                                        <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="6 9 12 15 18 9"></polyline>
+                                        </svg>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="contentDescription">Description</label>
+                                    <textarea id="contentDescription" rows="4" placeholder="What's this content about?"></textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Publishing Settings</label>
+                                    <div class="publishing-options">
+                                        <label class="radio-option">
+                                            <input type="radio" name="publishType" value="now" checked>
+                                            <span class="radio-label">Publish Now</span>
+                                        </label>
+                                        <label class="radio-option">
+                                            <input type="radio" name="publishType" value="schedule">
+                                            <span class="radio-label">Schedule</span>
+                                        </label>
+                                        <label class="radio-option">
+                                            <input type="radio" name="publishType" value="draft">
+                                            <span class="radio-label">Save Draft</span>
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="schedule-picker hidden" id="schedulePicker">
+                                        <input type="datetime-local" id="scheduleDate">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-secondary close-modal-btn">Cancel</button>
+                    <button class="btn-primary" id="saveContentBtn">Create Content</button>
+                </div>
             </div>
         </div>
     </div>
