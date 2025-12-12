@@ -97,12 +97,40 @@
                         <line x1="8" y1="2" x2="8" y2="6"></line>
                         <line x1="3" y1="10" x2="21" y2="10"></line>
                     </svg>
-                    <select id="dateFilter">
-                        <option value="30">Last 30 Days</option>
-                        <option value="7">Last 7 Days</option>
-                        <option value="1">Today</option>
-                        <option value="90">Last 90 Days</option>
-                    </select>
+                    <div class="custom-dropdown" id="dateFilterDropdown">
+                        <button class="dropdown-toggle" id="dateFilterToggle">
+                            <span class="dropdown-text">Last 30 Days</span>
+                            <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="dropdown-menu" id="dateFilterMenu">
+                            <div class="dropdown-item active" data-value="30">
+                                <span>Last 30 Days</span>
+                                <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                            <div class="dropdown-item" data-value="7">
+                                <span>Last 7 Days</span>
+                                <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                            <div class="dropdown-item" data-value="1">
+                                <span>Today</span>
+                                <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                            <div class="dropdown-item" data-value="90">
+                                <span>Last 90 Days</span>
+                                <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <button class="btn-primary" id="createContentBtn">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -230,7 +258,7 @@
             <div class="card activities-card">
                 <div class="card-header">
                     <h2>Recent Activities</h2>
-                    <a href="#" class="view-all">View All</a>
+                    <a href="#" class="view-all" id="viewAllActivities">View All</a>
                 </div>
                 <div class="activities-list" id="activitiesList">
                     <div class="activity-item">
@@ -241,10 +269,10 @@
                             </svg>
                         </div>
                         <div class="activity-content">
-                            <h4>New article "Weekly Deals" published</h4>
-                            <p class="activity-time">2 hours ago</p>
+                            <h4>Đăng bài "Khuyến Mãi Cuối Tuần"</h4>
+                            <p class="activity-time">2 giờ trước</p>
                         </div>
-                        <span class="activity-badge web">Web/FB</span>
+                        <span class="activity-badge web">FB/Zalo</span>
                     </div>
 
                     <div class="activity-item">
@@ -255,10 +283,10 @@
                             </svg>
                         </div>
                         <div class="activity-content">
-                            <h4>Livestream "Cooking with Chef John"</h4>
-                            <p class="activity-time">Scheduled for 5:00 PM</p>
+                            <h4>Livestream "Flash Sale Rau Củ"</h4>
+                            <p class="activity-time">Lên lịch lúc 19:00</p>
                         </div>
-                        <span class="activity-badge upcoming">Upcoming</span>
+                        <span class="activity-badge upcoming">Sắp diễn ra</span>
                     </div>
 
                     <div class="activity-item">
@@ -269,10 +297,10 @@
                             </svg>
                         </div>
                         <div class="activity-content">
-                            <h4>Comment Approved</h4>
-                            <p class="activity-time">1 day ago • "Fresh Produce Guide"</p>
+                            <h4>Duyệt bình luận khách hàng</h4>
+                            <p class="activity-time">1 ngày trước • "Trái Cây Nhập Khẩu"</p>
                         </div>
-                        <span class="activity-badge done">Done</span>
+                        <span class="activity-badge done">Hoàn thành</span>
                     </div>
 
                     <div class="activity-item">
@@ -283,10 +311,10 @@
                             </svg>
                         </div>
                         <div class="activity-content">
-                            <h4>Video "Product Review" uploaded</h4>
-                            <p class="activity-time">2 days ago</p>
+                            <h4>Video "Hướng Dẫn Chọn Hải Sản"</h4>
+                            <p class="activity-time">2 ngày trước</p>
                         </div>
-                        <span class="activity-badge done">Done</span>
+                        <span class="activity-badge done">Hoàn thành</span>
                     </div>
 
                     <div class="activity-item">
@@ -298,10 +326,10 @@
                             </svg>
                         </div>
                         <div class="activity-content">
-                            <h4>Monthly report generated</h4>
-                            <p class="activity-time">3 days ago</p>
+                            <h4>Báo cáo doanh số tháng 12</h4>
+                            <p class="activity-time">3 ngày trước</p>
                         </div>
-                        <span class="activity-badge done">Done</span>
+                        <span class="activity-badge done">Hoàn thành</span>
                     </div>
                 </div>
             </div>
@@ -314,45 +342,45 @@
                 <div class="schedule-list" id="scheduleList">
                     <div class="schedule-item">
                         <div class="schedule-date">
-                            <span class="day-name">Mon</span>
-                            <span class="day-number">15</span>
+                            <span class="day-name">T2</span>
+                            <span class="day-number">16</span>
                         </div>
                         <div class="schedule-content">
-                            <h4>Weekly Deals Post</h4>
-                            <p class="schedule-time">10:00 AM • Web, FB, Zalo</p>
+                            <h4>Flash Sale Thịt Heo Sạch</h4>
+                            <p class="schedule-time">10:00 • FB, Zalo, TikTok</p>
                         </div>
                     </div>
 
                     <div class="schedule-item">
                         <div class="schedule-date">
-                            <span class="day-name">Wed</span>
-                            <span class="day-number">17</span>
+                            <span class="day-name">T4</span>
+                            <span class="day-number">18</span>
                         </div>
                         <div class="schedule-content">
-                            <h4>Livestream: New Arrivals</h4>
-                            <p class="schedule-time">7:00 PM • YouTube, TikTok</p>
+                            <h4>Livestream: Giới Thiệu Sản Phẩm Organic</h4>
+                            <p class="schedule-time">19:00 • YouTube, Facebook</p>
                         </div>
                     </div>
 
                     <div class="schedule-item">
                         <div class="schedule-date">
-                            <span class="day-name">Fri</span>
-                            <span class="day-number">19</span>
-                        </div>
-                        <div class="schedule-content">
-                            <h4>Product Showcase Video</h4>
-                            <p class="schedule-time">2:00 PM • YouTube, Facebook</p>
-                        </div>
-                    </div>
-
-                    <div class="schedule-item">
-                        <div class="schedule-date">
-                            <span class="day-name">Sat</span>
+                            <span class="day-name">T6</span>
                             <span class="day-number">20</span>
                         </div>
                         <div class="schedule-content">
-                            <h4>Weekend Special Livestream</h4>
-                            <p class="schedule-time">8:00 PM • All Platforms</p>
+                            <h4>Video: Combo Gia Đình Cuối Tuần</h4>
+                            <p class="schedule-time">14:00 • YouTube, TikTok</p>
+                        </div>
+                    </div>
+
+                    <div class="schedule-item">
+                        <div class="schedule-date">
+                            <span class="day-name">T7</span>
+                            <span class="day-number">21</span>
+                        </div>
+                        <div class="schedule-content">
+                            <h4>Livestream Bán Hàng: Rau Củ Giá Sốc</h4>
+                            <p class="schedule-time">20:00 • Tất cả nền tảng</p>
                         </div>
                     </div>
                 </div>
@@ -551,6 +579,85 @@
                 <div class="modal-footer">
                     <button class="btn-secondary close-modal-btn">Cancel</button>
                     <button class="btn-primary" id="saveContentBtn">Create Content</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scheduled Posts Modal -->
+    <div class="modal" id="scheduleModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="header-text">
+                        <h3>Publishing Schedule</h3>
+                        <p>Quản lý lịch đăng bài và livestream</p>
+                    </div>
+                    <button class="close-modal" id="closeScheduleModal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <!-- Filter and Search -->
+                    <div class="schedule-filters">
+                        <div class="filter-tabs">
+                            <button class="filter-tab active" data-filter="all">Tất cả</button>
+                            <button class="filter-tab" data-filter="article">Bài viết</button>
+                            <button class="filter-tab" data-filter="livestream">Livestream</button>
+                            <button class="filter-tab" data-filter="video">Video</button>
+                        </div>
+                        <div class="schedule-search">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            <input type="text" id="scheduleSearch" placeholder="Tìm kiếm...">
+                        </div>
+                    </div>
+                    
+                    <!-- Posts List -->
+                    <div class="scheduled-posts-list" id="scheduledPostsList">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                    
+                    <!-- Empty State -->
+                    <div class="schedule-empty hidden" id="scheduleEmpty">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        <p>Không tìm thấy bài đăng nào</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activities Modal -->
+    <div class="modal" id="activitiesModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="header-text">
+                        <h3>Recent Activities</h3>
+                        <p>Tất cả hoạt động gần đây</p>
+                    </div>
+                    <button class="close-modal" id="closeActivitiesModal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <!-- Filter Tabs -->
+                    <div class="activity-filters">
+                        <button class="filter-tab active" data-filter="all">Tất cả</button>
+                        <button class="filter-tab" data-filter="edit">Đăng bài</button>
+                        <button class="filter-tab" data-filter="livestream">Livestream</button>
+                        <button class="filter-tab" data-filter="approved">Duyệt</button>
+                        <button class="filter-tab" data-filter="video">Video</button>
+                    </div>
+                    
+                    <!-- Activities List -->
+                    <div class="all-activities-list" id="allActivitiesList">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
                 </div>
             </div>
         </div>

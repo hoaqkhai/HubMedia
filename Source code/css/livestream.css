@@ -44,8 +44,28 @@
 }
 
 .video-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     color: white;
+    background: var(--video-bg);
+    position: relative;
+    z-index: 2;
+}
+
+#localVideo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    transform: scaleX(-1); /* Mirror effect for webcam */
 }
 
 .video-placeholder h3 {
@@ -57,6 +77,10 @@
 .video-placeholder p {
     color: rgba(255, 255, 255, 0.7);
     font-size: 15px;
+}
+
+.video-placeholder.hidden {
+    display: none;
 }
 
 .live-badge {
@@ -631,4 +655,477 @@ input:checked + .slider:before {
     color: var(--text-secondary);
     padding: 40px 20px;
     font-size: 14px;
+}
+
+/* Floating Animations */
+.btn-floating-reaction {
+    position: absolute;
+    bottom: 20px;
+    right: 50%;
+    transform: translateX(50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    border: 2px solid white;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.btn-floating-reaction:hover {
+    transform: translateX(50%) scale(1.1);
+    background: var(--danger-color);
+    border-color: var(--danger-color);
+}
+
+.btn-floating-reaction:active {
+    transform: translateX(50%) scale(0.9);
+}
+
+.btn-floating-reaction svg {
+    width: 24px;
+    height: 24px;
+}
+
+.reaction-container {
+    position: absolute;
+    bottom: 80px; /* Above the button */
+    right: 50%;
+    width: 100px;
+    height: 300px;
+    pointer-events: none;
+    transform: translateX(50%);
+    overflow: hidden;
+    z-index: 5;
+}
+
+.floating-heart {
+    position: absolute;
+    bottom: 0;
+    width: 24px;
+    height: 24px;
+    color: var(--danger-color);
+    animation: floatUp 2s ease-out forwards;
+    opacity: 0;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) scale(0.5);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+        transform: translateY(-20px) scale(1);
+    }
+    100% {
+        transform: translateY(-200px) scale(0.5);
+        opacity: 0;
+    }
+}
+
+/* Gift Button */
+.btn-gift {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: transparent;
+    color: #FFD700;
+    border: 1px solid #FFD700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.btn-gift:hover {
+    background: #FFD700;
+    color: white;
+}
+
+.btn-gift svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Gift Message Style */
+.chat-message.gift-message {
+    background: #FFF8E1;
+    border-left: 3px solid #FFD700;
+    border-radius: 8px;
+    padding: 8px;
+    align-items: center;
+}
+
+.chat-message.gift-message .message-text {
+    background: transparent;
+    box-shadow: none;
+    font-weight: 600;
+    color: #F57F17;
+    font-size: 13px;
+    padding: 0;
+}
+
+.gift-emoji {
+    font-size: 20px;
+    margin-left: 4px;
+}
+
+/* Gift Modal */
+.gift-modal-content {
+    background: white;
+    border-radius: 16px;
+    padding: 0;
+    max-width: 500px;
+    width: 90%;
+}
+
+.gift-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding: 24px;
+}
+
+.gift-item {
+    background: var(--studio-bg);
+    border: 1px solid var(--studio-border);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.gift-item:hover {
+    background: #FFF8E1;
+    border-color: #FFD700;
+    transform: translateY(-2px);
+}
+
+.gift-icon {
+    font-size: 32px;
+}
+
+.gift-name {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.gift-price {
+    font-size: 13px;
+    color: var(--text-secondary);
+    background: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+/* Summary Modal */
+.summary-content {
+    background: white;
+    border-radius: 20px;
+    padding: 32px;
+    max-width: 480px;
+    width: 90%;
+    text-align: center;
+}
+
+.summary-header {
+    margin-bottom: 32px;
+}
+
+.summary-header h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.summary-header p {
+    color: var(--text-secondary);
+}
+
+.summary-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.summary-stat-item {
+    background: var(--studio-bg);
+    padding: 16px;
+    border-radius: 12px;
+}
+
+.summary-stat-item.highlight {
+    background: #FFF8E1;
+    border: 1px solid #FFD700;
+}
+
+.summary-stat-item.highlight .s-value {
+    color: #F57F17;
+}
+
+.s-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.s-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.full-width {
+    width: 100%;
+    justify-content: center;
+    padding: 14px;
+    font-size: 16px;
+}
+
+/* Setup Modal Styles */
+.setup-content {
+    background: white;
+    border-radius: 20px;
+    padding: 0;
+    max-width: 500px;
+    width: 90%;
+    overflow: hidden;
+}
+
+.setup-body {
+    padding: 24px;
+}
+
+.setup-input,
+.setup-textarea,
+.setup-select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--studio-border);
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 15px;
+    margin-top: 8px;
+    transition: all 0.2s;
+}
+
+.setup-textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.setup-select {
+    cursor: pointer;
+    background: white;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236C757D' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 40px;
+}
+
+.setup-input:focus,
+.setup-textarea:focus,
+.setup-select:focus {
+    border-color: var(--primary-blue);
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(91, 95, 237, 0.1);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.platform-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.platform-option input {
+    display: none;
+}
+
+.p-card {
+    border: 2px solid var(--studio-border);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--studio-bg);
+}
+
+.platform-option input:checked + .p-card {
+    border-color: var(--primary-blue);
+    background: #F0F1FF;
+}
+
+.p-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.p-icon.yt { background: #FF0000; }
+.p-icon.fb { background: #1877F2; }
+.p-icon.tt { background: #000000; }
+
+.p-card span {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.setup-footer {
+    margin-top: 24px;
+}
+
+/* Recent Streams Section Removed */
+
+/* ============================================
+   MODAL SYSTEM - BULLETPROOF VERSION
+   ============================================ */
+
+/* Base Modal Overlay - ALWAYS HIDDEN by default */
+.modal-overlay {
+    /* Positioning */
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    
+    /* Display - FORCE HIDDEN */
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    
+    /* Layout when active */
+    align-items: center;
+    justify-content: center;
+    
+    /* Styling */
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    
+    /* Z-index - ULTRA HIGH to override everything */
+    z-index: 99999 !important;
+    
+    /* Transitions */
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    
+    /* Prevent scroll */
+    overflow: auto;
+}
+
+/* Active State - ONLY show when has .active class */
+.modal-overlay.active {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Modal Content Container */
+.modal-content {
+    position: relative;
+    z-index: 100000 !important;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* Animate modal content when overlay is active */
+.modal-overlay.active .modal-content {
+    transform: scale(1);
+}
+
+/* Modal Header */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px;
+    border-bottom: 1px solid var(--studio-border);
+    background: white;
+    border-radius: 20px 20px 0 0;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.modal-header h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+/* Modal Close Button */
+.modal-close {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: var(--gray-100);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.modal-close:hover {
+    background: var(--gray-200);
+    transform: rotate(90deg);
+}
+
+.modal-close svg {
+    width: 20px;
+    height: 20px;
+    color: var(--text-secondary);
+}
+
+/* Prevent body scroll when modal is open */
+body.modal-open {
+    overflow: hidden !important;
 }

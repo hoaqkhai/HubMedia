@@ -1,80 +1,121 @@
 // ==================== CALENDAR DATA ====================
 let currentDate = new Date();
 let selectedDate = null;
+let currentTypeFilter = 'all';
+let currentPlatformFilter = 'all';
+
 let events = [
     {
         id: 1,
-        title: 'Draft: Weekly Deals',
-        date: '2024-12-04',
+        title: 'Flash Sale Thịt Heo Sạch',
+        date: '2024-12-16',
         time: '10:00',
-        type: 'draft',
-        platforms: ['Web', 'Facebook'],
-        description: 'Weekly promotional deals post'
+        type: 'post',
+        platforms: ['Facebook', 'Zalo', 'TikTok'],
+        description: 'Khuyến mãi đặc biệt thịt heo sạch giảm 30%'
     },
     {
         id: 2,
-        title: 'New Arrivals',
-        date: '2024-12-08',
-        time: '14:00',
-        type: 'post',
-        platforms: ['Web', 'Facebook', 'Zalo'],
-        description: 'New product arrivals announcement'
-    },
-    {
-        id: 3,
-        title: 'Stock Update',
-        date: '2024-12-10',
-        time: '09:00',
-        type: 'post',
-        platforms: ['Web'],
-        description: 'Stock availability update'
-    },
-    {
-        id: 4,
-        title: 'Live Q&A',
-        date: '2024-12-14',
+        title: 'Livestream: Giới Thiệu Sản Phẩm Organic',
+        date: '2024-12-18',
         time: '19:00',
         type: 'livestream',
         platforms: ['YouTube', 'Facebook'],
-        description: 'Monthly Q&A livestream'
+        description: 'Livestream giới thiệu dòng sản phẩm organic mới'
+    },
+    {
+        id: 3,
+        title: 'Video: Combo Gia Đình Cuối Tuần',
+        date: '2024-12-20',
+        time: '14:00',
+        type: 'video',
+        platforms: ['YouTube', 'TikTok'],
+        description: 'Video quảng cáo combo gia đình tiết kiệm'
+    },
+    {
+        id: 4,
+        title: 'Livestream Bán Hàng: Rau Củ Giá Sốc',
+        date: '2024-12-21',
+        time: '20:00',
+        type: 'livestream',
+        platforms: ['Facebook', 'YouTube', 'TikTok'],
+        description: 'Livestream bán hàng rau củ quả giá sốc'
     },
     {
         id: 5,
-        title: 'Cross-platform Post',
-        date: '2024-12-16',
-        time: '15:00',
+        title: 'Khuyến Mãi Hải Sản Tươi Sống',
+        date: '2024-12-23',
+        time: '09:00',
         type: 'post',
         platforms: ['Facebook', 'Zalo'],
-        description: 'Cross-platform post'
+        description: 'Đăng bài khuyến mãi hải sản tươi sống'
     },
     {
         id: 6,
-        title: 'Product Review',
-        date: '2024-12-18',
-        time: '20:00',
+        title: 'Video: Hướng Dẫn Nấu Món Giáng Sinh',
+        date: '2024-12-25',
+        time: '15:00',
         type: 'video',
-        platforms: ['YouTube'],
-        description: 'Product review video'
+        platforms: ['YouTube', 'TikTok'],
+        description: 'Video hướng dẫn nấu các món ăn Giáng Sinh'
     },
     {
         id: 7,
-        title: 'TikTok Short',
-        date: '2024-12-18',
-        time: '12:00',
-        type: 'story',
-        platforms: ['TikTok'],
-        description: 'Short form content'
+        title: 'Livestream: Flash Sale Cuối Năm',
+        date: '2024-12-27',
+        time: '20:00',
+        type: 'livestream',
+        platforms: ['Facebook', 'YouTube'],
+        description: 'Livestream flash sale lớn cuối năm'
     },
     {
         id: 8,
-        title: 'Community Update',
-        date: '2024-12-24',
+        title: 'Combo Tết - Ưu Đãi Đặc Biệt',
+        date: '2024-12-30',
         time: '10:00',
         type: 'post',
-        platforms: ['Web', 'Facebook'],
-        description: 'Community engagement post'
+        platforms: ['Facebook', 'Zalo'],
+        description: 'Giới thiệu các combo Tết với ưu đãi hấp dẫn'
     }
 ];
+
+// ==================== FILTER FUNCTIONS ====================
+function getFilteredEvents() {
+    return events.filter(event => {
+        const typeMatch = currentTypeFilter === 'all' || event.type === currentTypeFilter;
+        const platformMatch = currentPlatformFilter === 'all' || 
+            event.platforms.some(p => p.toLowerCase() === currentPlatformFilter.toLowerCase());
+        return typeMatch && platformMatch;
+    });
+}
+
+function updateStatistics() {
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    
+    // Get start of current week (Sunday)
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay());
+    startOfWeek.setHours(0, 0, 0, 0);
+    
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
+    
+    const monthTotal = events.filter(event => {
+        const eventDate = new Date(event.date);
+        return eventDate.getMonth() === currentMonth && eventDate.getFullYear() === currentYear;
+    }).length;
+    
+    const weekTotal = events.filter(event => {
+        const eventDate = new Date(event.date);
+        return eventDate >= startOfWeek && eventDate <= endOfWeek;
+    }).length;
+    
+    document.getElementById('monthTotal').textContent = monthTotal;
+    document.getElementById('weekTotal').textContent = weekTotal;
+}
 
 // ==================== CALENDAR RENDERING ====================
 function renderCalendar() {
@@ -82,8 +123,8 @@ function renderCalendar() {
     const month = currentDate.getMonth();
     
     // Update month display
-    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-                       'July', 'August', 'September', 'October', 'November', 'December'];
+    const monthNames = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
+                       'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
     document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
     
     // Get first day of month and number of days
@@ -114,6 +155,9 @@ function renderCalendar() {
         const dayElement = createDayElement(day, true, year, month + 1);
         calendarGrid.appendChild(dayElement);
     }
+    
+    // Update statistics
+    updateStatistics();
 }
 
 function createDayElement(day, isOtherMonth, year, month) {
@@ -542,6 +586,26 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// ==================== FILTER EVENT LISTENERS ====================
+const typeFilter = document.getElementById('typeFilter');
+const platformFilter = document.getElementById('platformFilter');
+
+if (typeFilter) {
+    typeFilter.addEventListener('change', (e) => {
+        currentTypeFilter = e.target.value;
+        renderCalendar();
+        renderUpcoming();
+    });
+}
+
+if (platformFilter) {
+    platformFilter.addEventListener('change', (e) => {
+        currentPlatformFilter = e.target.value;
+        renderCalendar();
+        renderUpcoming();
+    });
+}
 
 // ==================== INITIALIZATION ====================
 window.addEventListener('load', () => {

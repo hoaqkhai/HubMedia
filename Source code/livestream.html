@@ -116,10 +116,21 @@
                         </svg>
                         <span id="viewerCount">0</span>
                     </div>
-                    <div class="video-placeholder">
+                    <!-- Reaction Container -->
+                    <div class="reaction-container" id="reactionContainer"></div>
+                    
+                    <video id="localVideo" autoplay muted playsinline></video>
+                    <div class="video-placeholder" id="videoPlaceholder">
                         <h3>Stream Offline</h3>
                         <p>Click "Go Live" to start streaming</p>
                     </div>
+                    
+                    <!-- Floating Reaction Button -->
+                    <button class="btn-floating-reaction" id="reactionBtn" title="Send Love">
+                        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                    </button>
                 </div>
 
                 <!-- Controls Bar -->
@@ -192,6 +203,10 @@
                         <div class="stat-label">Session Health</div>
                         <div class="stat-value" style="color: var(--success-color);">Excellent</div>
                     </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Revenue</div>
+                        <div class="stat-value" style="color: #FFD700;">$<span id="revenueCount">0.00</span></div>
+                    </div>
                 </div>
             </div>
 
@@ -230,6 +245,15 @@
                 </div>
                 <div class="chat-input-area">
                     <div class="input-wrapper">
+                        <button class="btn-gift" id="giftBtn" title="Send Gift">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 12 20 22 4 22 4 12"></polyline>
+                                <rect x="2" y="7" width="20" height="5"></rect>
+                                <line x1="12" y1="22" x2="12" y2="7"></line>
+                                <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
+                                <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+                            </svg>
+                        </button>
                         <input type="text" class="chat-input" placeholder="Say something...">
                         <button class="btn-send">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -242,6 +266,152 @@
             </div>
         </div>
     </main>
+
+    <!-- Gift Modal -->
+    <div class="modal-overlay" id="giftModal">
+        <div class="modal-content gift-modal-content">
+            <div class="modal-header">
+                <h3>Send a Gift</h3>
+                <button class="modal-close" id="closeGiftModal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="gift-grid">
+                <button class="gift-item" data-gift="rose" data-price="1">
+                    <div class="gift-icon">🌹</div>
+                    <div class="gift-name">Rose</div>
+                    <div class="gift-price">$1.00</div>
+                </button>
+                <button class="gift-item" data-gift="coffee" data-price="5">
+                    <div class="gift-icon">☕</div>
+                    <div class="gift-name">Coffee</div>
+                    <div class="gift-price">$5.00</div>
+                </button>
+                <button class="gift-item" data-gift="diamond" data-price="20">
+                    <div class="gift-icon">💎</div>
+                    <div class="gift-name">Diamond</div>
+                    <div class="gift-price">$20.00</div>
+                </button>
+                <button class="gift-item" data-gift="rocket" data-price="50">
+                    <div class="gift-icon">🚀</div>
+                    <div class="gift-name">Rocket</div>
+                    <div class="gift-price">$50.00</div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Setup Stream Modal -->
+    <div class="modal-overlay" id="setupModal">
+        <div class="modal-content setup-content">
+            <div class="modal-header">
+                <h3>Go Live Setup</h3>
+                <button class="modal-close" id="closeSetupModal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="setup-body">
+                <div class="form-group">
+                    <label>Stream Title</label>
+                    <input type="text" id="streamTitleInput" class="setup-input" placeholder="Enter a catchy title...">
+                </div>
+                
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="streamDescInput" class="setup-textarea" placeholder="Tell viewers what this stream is about..." rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Stream Quality</label>
+                    <select id="streamQualitySelect" class="setup-select">
+                        <option value="720">720p HD</option>
+                        <option value="1080" selected>1080p Full HD</option>
+                        <option value="1440">1440p 2K</option>
+                        <option value="2160">4K Ultra HD</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Select Platforms</label>
+                    <div class="platform-grid">
+                        <label class="platform-option">
+                            <input type="checkbox" name="streamPlatform" value="youtube" checked>
+                            <div class="p-card">
+                                <div class="p-icon yt">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path>
+                                        <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
+                                    </svg>
+                                </div>
+                                <span>YouTube</span>
+                            </div>
+                        </label>
+                        <label class="platform-option">
+                            <input type="checkbox" name="streamPlatform" value="facebook">
+                            <div class="p-card">
+                                <div class="p-icon fb">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                                    </svg>
+                                </div>
+                                <span>Facebook</span>
+                            </div>
+                        </label>
+                        <label class="platform-option">
+                            <input type="checkbox" name="streamPlatform" value="tiktok">
+                            <div class="p-card">
+                                <div class="p-icon tt">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path>
+                                    </svg>
+                                </div>
+                                <span>TikTok</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setup-footer">
+                    <button class="btn-primary full-width" id="startBroadcastBtn">Start Streaming</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stream Summary Modal -->
+    <div class="modal-overlay" id="summaryModal">
+        <div class="modal-content summary-content">
+            <div class="summary-header">
+                <h2>Stream Ended</h2>
+                <p>Here's how you performed</p>
+            </div>
+            <div class="summary-stats">
+                <div class="summary-stat-item">
+                    <div class="s-label">Duration</div>
+                    <div class="s-value" id="sumDuration">00:00:00</div>
+                </div>
+                <div class="summary-stat-item">
+                    <div class="s-label">Peak Viewers</div>
+                    <div class="s-value" id="sumViewers">0</div>
+                </div>
+                <div class="summary-stat-item">
+                    <div class="s-label">New Followers</div>
+                    <div class="s-value" id="sumFollowers">0</div>
+                </div>
+                <div class="summary-stat-item highlight">
+                    <div class="s-label">Total Revenue</div>
+                    <div class="s-value" id="sumRevenue">$0.00</div>
+                </div>
+            </div>
+            <button class="btn-primary full-width" id="closeSummaryBtn">Close Studio</button>
+        </div>
+    </div>
 
     <script src="js/livestream.js"></script>
 </body>

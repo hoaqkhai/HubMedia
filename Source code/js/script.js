@@ -65,14 +65,49 @@ if (logoutBtn) {
     });
 }
 
-// ==================== DATE FILTER ====================
-const dateFilter = document.getElementById('dateFilter');
-if (dateFilter) {
-    dateFilter.addEventListener('change', function() {
-        const days = this.value;
-        showNotification(`Showing data for last ${days} days`, 'info');
-        // Simulate data refresh
-        refreshStats(days);
+// ==================== CUSTOM DROPDOWN ====================
+const dateFilterDropdown = document.getElementById('dateFilterDropdown');
+const dateFilterToggle = document.getElementById('dateFilterToggle');
+const dateFilterMenu = document.getElementById('dateFilterMenu');
+const dropdownItems = document.querySelectorAll('.dropdown-item');
+
+if (dateFilterToggle && dateFilterMenu) {
+    // Toggle dropdown
+    dateFilterToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dateFilterDropdown.classList.toggle('active');
+    });
+    
+    // Select item
+    dropdownItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            // Remove active from all items
+            dropdownItems.forEach(i => i.classList.remove('active'));
+            
+            // Add active to clicked item
+            item.classList.add('active');
+            
+            // Update button text
+            const text = item.querySelector('span').textContent;
+            document.querySelector('.dropdown-text').textContent = text;
+            
+            // Close dropdown
+            dateFilterDropdown.classList.remove('active');
+            
+            // Get value and refresh stats
+            const days = item.dataset.value;
+            showNotification(`Showing data for ${text}`, 'info');
+            refreshStats(days);
+        });
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!dateFilterDropdown.contains(e.target)) {
+            dateFilterDropdown.classList.remove('active');
+        }
     });
 }
 
@@ -89,13 +124,16 @@ function refreshStats(days) {
 }
 
 // ==================== CONTENT MANAGEMENT ====================
-// Mock Data
+// Mock Data - Supermarket Content
 let contentData = [
-    { id: 1, title: 'Top 10 Music Trends 2024', category: 'Article', status: 'Published', date: '2024-05-15', views: 12500 },
-    { id: 2, title: 'Guitar Masterclass Review', category: 'Video', status: 'Published', date: '2024-05-14', views: 8200 },
-    { id: 3, title: 'Live Session: Acoustic Night', category: 'Livestream', status: 'Scheduled', date: '2024-05-20', views: 0 },
-    { id: 4, title: 'Best Synthesisers for Beginners', category: 'Article', status: 'Draft', date: '2024-05-16', views: 0 },
-    { id: 5, title: 'Drum Kit Setup Guide', category: 'Video', status: 'Published', date: '2024-05-10', views: 5400 }
+    { id: 1, title: 'Khuyến Mãi Cuối Tuần - Giảm 50% Trái Cây Nhập Khẩu', category: 'Article', status: 'Published', date: '2024-12-12', views: 15200 },
+    { id: 2, title: 'Livestream: Giới Thiệu Sản Phẩm Organic Mới', category: 'Livestream', status: 'Published', date: '2024-12-11', views: 8900 },
+    { id: 3, title: 'Flash Sale Thịt Heo Sạch - Chỉ 3 Giờ', category: 'Article', status: 'Scheduled', date: '2024-12-15', views: 0 },
+    { id: 4, title: 'Video: Hướng Dẫn Chọn Hải Sản Tươi Ngon', category: 'Video', status: 'Published', date: '2024-12-10', views: 6700 },
+    { id: 5, title: 'Livestream Bán Hàng: Rau Củ Quả Giá Sốc', category: 'Livestream', status: 'Draft', date: '2024-12-13', views: 0 },
+    { id: 6, title: 'Combo Gia Đình - Tiết Kiệm Đến 30%', category: 'Article', status: 'Published', date: '2024-12-09', views: 12100 },
+    { id: 7, title: 'Livestream: Nấu Ăn Với Đầu Bếp Chuyên Nghiệp', category: 'Livestream', status: 'Scheduled', date: '2024-12-14', views: 0 },
+    { id: 8, title: 'Sản Phẩm Mới: Thực Phẩm Hữu Cơ Cao Cấp', category: 'Article', status: 'Published', date: '2024-12-08', views: 9300 }
 ];
 
 const contentTableBody = document.getElementById('contentTableBody');
@@ -396,6 +434,107 @@ function addActivity(type, title, time, badge) {
     if (activitiesList.children.length > 5) activitiesList.lastChild.remove();
 }
 
+// ==================== ALL ACTIVITIES MODAL ====================
+const viewAllActivities = document.getElementById('viewAllActivities');
+const activitiesModal = document.getElementById('activitiesModal');
+const closeActivitiesModal = document.getElementById('closeActivitiesModal');
+const activityFilterTabs = document.querySelectorAll('.activity-filters .filter-tab');
+
+// Extended activities data
+const allActivities = [
+    { type: 'edit', title: 'Đăng bài "Khuyến Mãi Cuối Tuần"', time: '2 giờ trước', badge: 'FB/Zalo' },
+    { type: 'livestream', title: 'Livestream "Flash Sale Rau Củ"', time: 'Lên lịch lúc 19:00', badge: 'Sắp diễn ra' },
+    { type: 'approved', title: 'Duyệt bình luận khách hàng', time: '1 ngày trước • "Trái Cây Nhập Khẩu"', badge: 'Hoàn thành' },
+    { type: 'video', title: 'Video "Hướng Dẫn Chọn Hải Sản"', time: '2 ngày trước', badge: 'Hoàn thành' },
+    { type: 'analytics', title: 'Báo cáo doanh số tháng 12', time: '3 ngày trước', badge: 'Hoàn thành' },
+    { type: 'edit', title: 'Đăng bài "Combo Gia Đình"', time: '4 ngày trước', badge: 'FB/Zalo/TikTok' },
+    { type: 'livestream', title: 'Livestream "Giới Thiệu Sản Phẩm Organic"', time: '5 ngày trước', badge: 'Hoàn thành' },
+    { type: 'approved', title: 'Duyệt 15 bình luận mới', time: '6 ngày trước', badge: 'Hoàn thành' },
+    { type: 'video', title: 'Video "Hướng Dẫn Bảo Quản Thực Phẩm"', time: '1 tuần trước', badge: 'Hoàn thành' },
+    { type: 'edit', title: 'Đăng bài "Flash Sale Thịt Heo"', time: '1 tuần trước', badge: 'FB/Zalo' }
+];
+
+let currentActivityFilter = 'all';
+
+function getActivityIcon(type) {
+    const icons = {
+        edit: '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>',
+        livestream: '<circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon>',
+        approved: '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>',
+        video: '<polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>',
+        analytics: '<line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line>'
+    };
+    return icons[type] || icons.edit;
+}
+
+function filterActivities() {
+    if (currentActivityFilter === 'all') {
+        return allActivities;
+    }
+    return allActivities.filter(activity => activity.type === currentActivityFilter);
+}
+
+function renderAllActivities() {
+    const container = document.getElementById('allActivitiesList');
+    if (!container) return;
+    
+    const filtered = filterActivities();
+    
+    container.innerHTML = filtered.map(activity => `
+        <div class="activity-item">
+            <div class="activity-icon ${activity.type}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    ${getActivityIcon(activity.type)}
+                </svg>
+            </div>
+            <div class="activity-content">
+                <h4>${activity.title}</h4>
+                <p class="activity-time">${activity.time}</p>
+            </div>
+            <span class="activity-badge ${activity.badge.toLowerCase().replace(/\//g, '-')}">${activity.badge}</span>
+        </div>
+    `).join('');
+}
+
+// Open activities modal
+if (viewAllActivities) {
+    viewAllActivities.addEventListener('click', function(e) {
+        e.preventDefault();
+        currentActivityFilter = 'all';
+        activityFilterTabs.forEach(tab => {
+            tab.classList.toggle('active', tab.dataset.filter === 'all');
+        });
+        renderAllActivities();
+        activitiesModal.classList.add('active');
+    });
+}
+
+// Close activities modal
+if (closeActivitiesModal) {
+    closeActivitiesModal.addEventListener('click', function() {
+        activitiesModal.classList.remove('active');
+    });
+}
+
+// Activity filter tabs
+activityFilterTabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+        activityFilterTabs.forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        currentActivityFilter = this.dataset.filter;
+        renderAllActivities();
+    });
+});
+
+// Close modal when clicking outside
+if (activitiesModal) {
+    activitiesModal.addEventListener('click', function(e) {
+        if (e.target === activitiesModal) {
+            activitiesModal.classList.remove('active');
+        }
+    });
+}
+
 // ==================== SCHEDULE & ACTIONS ====================
 const schedulePostBtn = document.getElementById('schedulePostBtn');
 if (schedulePostBtn) {
@@ -413,11 +552,153 @@ if (startLivestreamBtn) {
     });
 }
 
+const uploadVideoBtn = document.getElementById('uploadVideoBtn');
+if (uploadVideoBtn) {
+    uploadVideoBtn.addEventListener('click', function() {
+        openContentModal('Upload New Video');
+        // Simulate video tab selection
+        const categorySelect = document.getElementById('contentCategory');
+        if(categorySelect) categorySelect.value = 'Video';
+    });
+}
+
 const viewAnalyticsBtn = document.getElementById('viewAnalyticsBtn');
 if (viewAnalyticsBtn) {
     viewAnalyticsBtn.addEventListener('click', function() {
         showNotification('Navigating to Analytics...', 'info');
         setTimeout(() => window.location.href = 'analytics.html', 500);
+    });
+}
+
+// ==================== SCHEDULED POSTS MODAL ====================
+const viewCalendarBtn = document.getElementById('viewCalendarBtn');
+const scheduleModal = document.getElementById('scheduleModal');
+const closeScheduleModal = document.getElementById('closeScheduleModal');
+const scheduleSearch = document.getElementById('scheduleSearch');
+const filterTabs = document.querySelectorAll('.filter-tab');
+
+// Enhanced scheduled posts data with types
+const scheduledPosts = [
+    { date: '2024-12-16', dayName: 'T2', title: 'Flash Sale Thịt Heo Sạch', time: '10:00', platforms: 'FB, Zalo, TikTok', type: 'article' },
+    { date: '2024-12-18', dayName: 'T4', title: 'Livestream: Giới Thiệu Sản Phẩm Organic', time: '19:00', platforms: 'YouTube, Facebook', type: 'livestream' },
+    { date: '2024-12-20', dayName: 'T6', title: 'Video: Combo Gia Đình Cuối Tuần', time: '14:00', platforms: 'YouTube, TikTok', type: 'video' },
+    { date: '2024-12-21', dayName: 'T7', title: 'Livestream Bán Hàng: Rau Củ Giá Sốc', time: '20:00', platforms: 'Tất cả nền tảng', type: 'livestream' },
+    { date: '2024-12-23', dayName: 'T2', title: 'Khuyến Mãi Hải Sản Tươi Sống', time: '09:00', platforms: 'FB, Zalo', type: 'article' },
+    { date: '2024-12-25', dayName: 'T4', title: 'Video: Hướng Dẫn Nấu Món Giáng Sinh', time: '15:00', platforms: 'YouTube, TikTok', type: 'video' },
+    { date: '2024-12-27', dayName: 'T6', title: 'Livestream: Flash Sale Cuối Năm', time: '20:00', platforms: 'Tất cả nền tảng', type: 'livestream' }
+];
+
+let currentFilter = 'all';
+let currentSearch = '';
+
+function getTypeLabel(type) {
+    const labels = {
+        'article': 'Bài viết',
+        'livestream': 'Livestream',
+        'video': 'Video'
+    };
+    return labels[type] || type;
+}
+
+function filterPosts() {
+    let filtered = scheduledPosts;
+    
+    // Filter by type
+    if (currentFilter !== 'all') {
+        filtered = filtered.filter(post => post.type === currentFilter);
+    }
+    
+    // Filter by search
+    if (currentSearch) {
+        filtered = filtered.filter(post => 
+            post.title.toLowerCase().includes(currentSearch.toLowerCase()) ||
+            post.platforms.toLowerCase().includes(currentSearch.toLowerCase())
+        );
+    }
+    
+    return filtered;
+}
+
+function renderScheduledPosts() {
+    const container = document.getElementById('scheduledPostsList');
+    const emptyState = document.getElementById('scheduleEmpty');
+    if (!container) return;
+    
+    const filtered = filterPosts();
+    
+    if (filtered.length === 0) {
+        container.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+    }
+    
+    emptyState.classList.add('hidden');
+    container.innerHTML = filtered.map(post => `
+        <div class="scheduled-post-item">
+            <div class="scheduled-post-date">
+                <span class="day-name">${post.dayName}</span>
+                <span class="day-number">${post.date.split('-')[2]}</span>
+            </div>
+            <div class="scheduled-post-content">
+                <h4>${post.title}</h4>
+                <div class="scheduled-post-meta">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    ${post.time} • ${post.platforms}
+                </div>
+                <span class="post-type-badge ${post.type}">${getTypeLabel(post.type)}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Open modal
+if (viewCalendarBtn) {
+    viewCalendarBtn.addEventListener('click', function() {
+        currentFilter = 'all';
+        currentSearch = '';
+        if (scheduleSearch) scheduleSearch.value = '';
+        filterTabs.forEach(tab => {
+            tab.classList.toggle('active', tab.dataset.filter === 'all');
+        });
+        renderScheduledPosts();
+        scheduleModal.classList.add('active');
+    });
+}
+
+// Close modal
+if (closeScheduleModal) {
+    closeScheduleModal.addEventListener('click', function() {
+        scheduleModal.classList.remove('active');
+    });
+}
+
+// Filter tabs
+filterTabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+        filterTabs.forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        currentFilter = this.dataset.filter;
+        renderScheduledPosts();
+    });
+});
+
+// Search
+if (scheduleSearch) {
+    scheduleSearch.addEventListener('input', function(e) {
+        currentSearch = e.target.value;
+        renderScheduledPosts();
+    });
+}
+
+// Close modal when clicking outside
+if (scheduleModal) {
+    scheduleModal.addEventListener('click', function(e) {
+        if (e.target === scheduleModal) {
+            scheduleModal.classList.remove('active');
+        }
     });
 }
 

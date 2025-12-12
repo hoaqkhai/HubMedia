@@ -87,7 +87,7 @@
         <header class="page-header">
             <div class="header-left">
                 <h1>Schedule</h1>
-                <p>Plan and schedule your publishing calendar</p>
+                <p>Quản lý lịch đăng bài và livestream</p>
             </div>
             <div class="header-right">
                 <button class="btn-nav" id="prevMonth">
@@ -95,22 +95,57 @@
                         <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
                 </button>
-                <div class="current-month" id="currentMonth">October 2024</div>
+                <div class="current-month" id="currentMonth">December 2024</div>
                 <button class="btn-nav" id="nextMonth">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
                 </button>
-                <button class="btn-today" id="todayBtn">Today</button>
+                <button class="btn-today" id="todayBtn">Hôm nay</button>
                 <button class="btn-primary" id="schedulePostBtn">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="12" y1="5" x2="12" y2="19"></line>
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                     </svg>
-                    Schedule Post
+                    Lên lịch
                 </button>
             </div>
         </header>
+
+        <!-- Filters and Stats -->
+        <div class="schedule-controls">
+            <div class="filter-section">
+                <div class="filter-group">
+                    <label>Loại:</label>
+                    <select id="typeFilter" class="filter-select">
+                        <option value="all">Tất cả</option>
+                        <option value="post">Bài viết</option>
+                        <option value="livestream">Livestream</option>
+                        <option value="video">Video</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Nền tảng:</label>
+                    <select id="platformFilter" class="filter-select">
+                        <option value="all">Tất cả</option>
+                        <option value="facebook">Facebook</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="tiktok">TikTok</option>
+                        <option value="zalo">Zalo</option>
+                    </select>
+                </div>
+            </div>
+            <div class="stats-section">
+                <div class="stat-item">
+                    <span class="stat-label">Tháng này</span>
+                    <span class="stat-value" id="monthTotal">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Tuần này</span>
+                    <span class="stat-value" id="weekTotal">0</span>
+                </div>
+            </div>
+        </div>
 
         <!-- Calendar -->
         <div class="calendar-container">

@@ -275,9 +275,9 @@ function renderLists() {
     const trendingList = document.getElementById('trendingList');
     if (trendingList) {
         const trendingItems = [
-            { title: 'Summer Sale Post', type: 'Instagram', val: '24.5K', trend: '+12%' },
-            { title: 'Tech Review 2024', type: 'YouTube', val: '18.2K', trend: '+8%' },
-            { title: 'Weekly Newsletter', type: 'Email', val: '12.1K', trend: '+5%' }
+            { title: 'Flash Sale Thịt Heo Sạch', type: 'Facebook', val: '24.5K', trend: '+12%' },
+            { title: 'Livestream Rau Củ Giá Sốc', type: 'YouTube', val: '18.2K', trend: '+8%' },
+            { title: 'Video Combo Gia Đình', type: 'TikTok', val: '12.1K', trend: '+5%' }
         ];
         
         trendingList.innerHTML = trendingItems.map(item => `
@@ -298,9 +298,9 @@ function renderLists() {
     const performedList = document.getElementById('performedList');
     if (performedList) {
         const topItems = [
-            { title: 'Top 10 Gadgets 2024', cr: '4.2%', views: '150K' },
-            { title: 'Python Tutorial for Beginners', cr: '3.8%', views: '120K' },
-            { title: 'Japan Travel Vlog', cr: '5.1%', views: '200K' }
+            { title: 'Khuyến Mãi Hải Sản Tươi Sống', cr: '4.2%', views: '150K' },
+            { title: 'Livestream Giới Thiệu Sản Phẩm Organic', cr: '3.8%', views: '120K' },
+            { title: 'Video Hướng Dẫn Nấu Món Giáng Sinh', cr: '5.1%', views: '200K' }
         ];
 
         performedList.innerHTML = topItems.map(item => `
@@ -318,9 +318,9 @@ function renderLists() {
     const goalList = document.getElementById('goalList');
     if (goalList) {
         const goals = [
-            { name: 'IG Growth', val: '85%', color: '#5B5FED' },
-            { name: 'Revenue', val: '92%', color: '#00C853' },
-            { name: 'Users', val: '78%', color: '#FF9800' }
+            { name: 'Tăng Trưởng FB', val: '85%', color: '#5B5FED' },
+            { name: 'Doanh Thu', val: '92%', color: '#00C853' },
+            { name: 'Khách Hàng', val: '78%', color: '#FF9800' }
         ];
         
         goalList.innerHTML = goals.map(item => `
