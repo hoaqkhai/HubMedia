@@ -336,7 +336,8 @@ eventForm.addEventListener('submit', (e) => {
     } else {
         // Add new event
         events.push(eventData);
-        showNotification('Schedule Successful', 'success');
+        // showNotification('Schedule Successful', 'success'); // Replaced by popup
+        showSuccessPopup();
     }
     
     closeEventModal();
@@ -556,5 +557,31 @@ document.getElementById('logoutBtn').addEventListener('click', function(e) {
         setTimeout(() => {
             window.location.href = 'login.html';
         }, 1000);
+    }
+});
+
+// ==================== SUCCESS POPUP ====================
+function showSuccessPopup() {
+    const popup = document.getElementById('successPopup');
+    popup.classList.add('active');
+    
+    // Play checkmark animation by re-inserting SVG
+    const checkmark = popup.querySelector('.success-checkmark');
+    const svg = checkmark.innerHTML;
+    checkmark.innerHTML = '';
+    setTimeout(() => {
+        checkmark.innerHTML = svg;
+    }, 10);
+}
+
+function closeSuccessPopup() {
+    const popup = document.getElementById('successPopup');
+    popup.classList.remove('active');
+}
+
+document.getElementById('successPopupBtn').addEventListener('click', closeSuccessPopup);
+document.getElementById('successPopup').addEventListener('click', (e) => {
+    if (e.target.id === 'successPopup') {
+        closeSuccessPopup();
     }
 });
