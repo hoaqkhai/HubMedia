@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Nhập - Hub Media</title>
+    <meta name="description" content="Đăng nhập vào hệ thống Hub Media">
+    <link rel="stylesheet" href="/css/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Background Animation -->
+    <div class="background-animation">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+    </div>
+
+    <!-- Login Container -->
+    <div class="login-container">
+
+        <!-- Left Side (branding) -->
+        <div class="login-left">
+            <div class="branding">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                    </div>
+                    <h1>Hub Media</h1>
+                </div>
+
+                <p class="tagline">Hệ thống quản lý – báo cáo – phân tích thông minh</p>
+
+                <div class="features">
+
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                            </svg>
+                        </div>
+                        <div class="feature-text">
+                            <h3>Realtime Analytics</h3>
+                            <p>Theo dõi dữ liệu theo thời gian thực</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                        </div>
+                        <div class="feature-text">
+                            <h3>Bảo mật tối đa</h3>
+                            <p>Mã hoá dữ liệu & bảo vệ tài khoản</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            </svg>
+                        </div>
+                        <div class="feature-text">
+                            <h3>Báo cáo chuyên sâu</h3>
+                            <p>Xuất dữ liệu trực quan – chi tiết</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side (form) -->
+        <div class="login-right">
+            <div class="login-box">
+
+                <div class="login-header">
+                    <h2>Chào mừng trở lại!</h2>
+                    <p>Đăng nhập để tiếp tục</p>
+                </div>
+
+                <!-- FORM -->
+                <form id="loginForm" class="login-form">
+
+                    <div class="form-group">
+                        <label for="email">Email hoặc Username</label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="text" 
+                                id="email" 
+                                name="email" 
+                                placeholder="Nhập email hoặc username"
+                                required
+                                autocomplete="username"
+                            >
+                        </div>
+                        <span class="error-message" id="emailError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Mật khẩu</label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password"
+                                placeholder="Nhập mật khẩu"
+                                required
+                                autocomplete="current-password"
+                            >
+                            <button type="button" id="togglePassword" class="toggle-password">
+                                👁
+                            </button>
+                        </div>
+                        <span class="error-message" id="passwordError"></span>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="checkbox-wrapper">
+                            <input type="checkbox" id="remember">
+                            <span class="checkbox-label">Ghi nhớ đăng nhập</span>
+                        </label>
+                        <a href="#" class="forgot-password">Quên mật khẩu?</a>
+                    </div>
+
+                    <!-- Backend login -->
+                    <button type="submit" class="btn-login">
+                        <span class="btn-text">Đăng nhập</span>
+                        <span class="btn-loader"></span>
+                    </button>
+
+                    <div class="error-message" id="loginError"></div>
+
+                    <div class="divider">
+                        <span>hoặc đăng nhập với</span>
+                    </div>
+
+                    <div class="social-login">
+                        <button type="button" class="social-btn google" onclick="window.location.href='/auth/google'">
+                            Google
+                        </button>
+                        <button type="button" class="social-btn facebook" onclick="window.location.href='/auth/facebook'">
+                            Facebook
+                        </button>
+                    </div>
+
+                   <div class="signup-link">
+                     Chưa có tài khoản? <a href="/register.html">Đăng ký ngay</a>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/login.js"></script>
+</body>
+</html>
